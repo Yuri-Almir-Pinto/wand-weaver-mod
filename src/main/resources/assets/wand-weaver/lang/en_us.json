@@ -1,6 +1,9 @@
 {
   "item.wand-weaver.wand": "Wand",
 
+  "key.category.wand-weaver": "Wand Weaver",
+  "key.wand-weaver.grab_wand": "Grab Hand",
+
   "spell.description.ignite": "Ignites the target block as if a flint and steel was used.",
   "spell.name.ignite": "Ignite",
 

@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
+import wandweaver.keybindings.KeyInputManager;
 import wandweaver.networking.WandWeavingClientNetworking;
 import wandweaver.rendering.SpellcastingRenderer;
 import wandweaver.spells.ISpell;
@@ -28,6 +29,7 @@ public class WandWeaverClient implements ClientModInitializer {
 		SpellcastingRenderer.register(WandWeaverClient::renderArrows);
 		SpellcastingManager.register();
 		WandWeavingClientNetworking.registerClientHandlers();
+		KeyInputManager.register();
 	}
 
 	public static void renderArrows(DrawContext context, RenderTickCounter tickDelta) {

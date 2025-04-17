@@ -11,9 +11,13 @@ import wandweaver.spells.impl.FeatherFallSpell;
 import wandweaver.spells.impl.IgniteSpell;
 import wandweaver.spells.impl.StupifySpell;
 
+import java.util.List;
+
 public class WandWeaver implements ModInitializer {
 	public static final String MOD_ID = "wand-weaver";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final int WAND_SLOT = 41;
+	public static final List<Integer> SPECIAL_ITEM_SLOTS = List.of(WAND_SLOT);
 	public static boolean isCasting = false;
 
 	@Override
