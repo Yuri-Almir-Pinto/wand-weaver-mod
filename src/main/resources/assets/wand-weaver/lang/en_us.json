@@ -1,0 +1,10 @@
+{
+  "spell.description.ignite": "Ignites the target block as if a flint and steel was used.",
+  "spell.name.ignite": "Ignite",
+
+  "spell.description.stupefy": "Makes the bottle of water in the off-hand slot awkward.",
+  "spell.name.stupefy": "Stupefy",
+
+  "spell.description.featherFall": "Breaks your fall with a feather falling effect.",
+  "spell.name.featherFall": "Feather Fall"
+}
