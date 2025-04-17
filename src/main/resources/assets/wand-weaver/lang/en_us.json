@@ -4,7 +4,7 @@
   "key.category.wand-weaver": "Wand Weaver",
   "key.wand-weaver.grab_wand": "Grab Hand",
 
-  "spell.description.ignite": "Ignites the target block as if a flint and steel was used.",
+  "spell.description.ignite": "Invokes flame energy to ignite a block, dry items in your off-hand, and light entities on fire.",
   "spell.name.ignite": "Ignite",
 
   "spell.description.stupefy": "Makes the bottle of water in the off-hand slot awkward.",
