@@ -1,4 +1,6 @@
 {
+  "item.wand-weaver.wand": "Varinha",
+
   "spell.description.ignite": "Acende um bloco como se um isqueiro tivesse sido usado.",
   "spell.name.ignite": "Inflamar",
 

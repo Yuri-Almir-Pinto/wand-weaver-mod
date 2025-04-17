@@ -1,4 +1,6 @@
 {
+  "item.wand-weaver.wand": "Wand",
+
   "spell.description.ignite": "Ignites the target block as if a flint and steel was used.",
   "spell.name.ignite": "Ignite",
 

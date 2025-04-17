@@ -11,6 +11,7 @@ import net.minecraft.util.Hand;
 import wandweaver.WandWeaver;
 import wandweaver.WandWeaverClient;
 import wandweaver.configs.WandWeaverConfig;
+import wandweaver.items.ItemsManager;
 import wandweaver.network.payloads.CastSpellC2SPayload;
 import wandweaver.network.payloads.CheckSpellC2SPayload;
 import wandweaver.spells.ISpell;
@@ -32,7 +33,7 @@ public class SpellcastingManager {
             return;
         }
 
-        if (player.getStackInHand(Hand.MAIN_HAND).getItem() != Items.STICK && (getIsCasting() || wasCasting)) {
+        if (player.getStackInHand(Hand.MAIN_HAND).getItem() != ItemsManager.WAND && (getIsCasting() || wasCasting)) {
             reset();
             clear();
             setAllProgress(0);

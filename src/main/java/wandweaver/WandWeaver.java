@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import wandweaver.items.ItemsManager;
 import wandweaver.network.WandWeaverNetworking;
 import wandweaver.spells.SpellManager;
 import wandweaver.spells.impl.FeatherFallSpell;
@@ -21,6 +22,9 @@ public class WandWeaver implements ModInitializer {
 
 		WandWeaverNetworking.registerPayloads();
 		WandWeaverNetworking.registerServerHandlers();
+
+		// Initialize items
+		ItemsManager.initialize();
 
 		// Spell registration
 		SpellManager.register(new IgniteSpell());

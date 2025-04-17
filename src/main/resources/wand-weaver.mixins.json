@@ -3,7 +3,6 @@
 	"package": "wandweaver.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"StickUseMixin",
 		"AbstractFurnaceBlockEntityAccessor"
 	],
 	"injectors": {
