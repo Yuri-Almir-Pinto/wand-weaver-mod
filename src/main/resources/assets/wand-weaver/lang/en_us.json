@@ -11,5 +11,8 @@
   "spell.name.stupefy": "Stupefy",
 
   "spell.description.featherFall": "Breaks your fall with a feather falling effect.",
-  "spell.name.featherFall": "Feather Fall"
+  "spell.name.featherFall": "Feather Fall",
+
+  "spell.description.mend": "Repairs broken blocks, broken items, damaged constructs, repairs items in your off-hand, and reduces the repair cost of items if cast on them while on the ground with their material.",
+  "spell.name.mend": "Mend"
 }

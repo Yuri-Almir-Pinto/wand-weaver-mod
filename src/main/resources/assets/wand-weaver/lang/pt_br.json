@@ -11,5 +11,8 @@
   "spell.name.stupefy": "Estupidificar",
 
   "spell.description.featherFall": "Para a sua queda com um efeito de queda leve.",
-  "spell.name.featherFall": "Queda Leve"
+  "spell.name.featherFall": "Queda Leve",
+
+  "spell.description.mend": "Repara blocos quebrados, itens quebrados, constructos danificados, repara itens na sua mão secundária e reduz o custo de reparo de itens se lançado neles enquanto estiverem no chão com seu material.",
+  "spell.name.mend": "Remendar"
 }

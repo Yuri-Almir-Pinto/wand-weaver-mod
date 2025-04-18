@@ -5,7 +5,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,8 +23,10 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.Nullable;
+import wandweaver.WandWeaver;
 import wandweaver.utils.Direction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -151,13 +155,53 @@ public abstract class AbstractSpell implements ISpell {
     }
 
     protected @Nullable Block getPlayerCrosshairTargetBlock(ServerPlayNetworking.Context context) {
-        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos(context);
+        BlockState blockState = this.getPlayerCrosshairTargetBlockState(context);
 
-        if (blockPos != null) {
-            return context.player().getServerWorld().getBlockState(blockPos).getBlock();
+        if (blockState != null) {
+            return blockState.getBlock();
         }
 
         return null;
+    }
+
+    protected @Nullable BlockState getPlayerCrosshairTargetBlockState(ServerPlayNetworking.Context context) {
+        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos(context);
+
+        if (blockPos != null) {
+            return context.player().getServerWorld().getBlockState(blockPos);
+        }
+
+        return null;
+    }
+
+    protected List<ItemEntity> getPlayerCrosshairTargetItems(ServerPlayNetworking.Context context) {
+        ServerWorld world = context.player().getServerWorld();
+        HitResult hitResult = this.getPlayerCrosshairTarget(context);
+
+        switch (hitResult) {
+            case BlockHitResult blockHitResult -> {
+                BlockPos blockPos = blockHitResult.getBlockPos();
+                BlockPos itemsLocation = blockPos.offset(blockHitResult.getSide());
+
+                return world.getOtherEntities(null, new Box(itemsLocation).expand(0.5, 0.5, 0.5))
+                        .stream()
+                        .filter(e -> e instanceof ItemEntity)
+                        .map(e -> (ItemEntity) e)
+                        .toList();
+            }
+            case EntityHitResult entityHitResult -> {
+                Entity entity = entityHitResult.getEntity();
+
+                return world.getOtherEntities(null, entity.getBoundingBox().expand(0.5, 0.5, 0.5))
+                        .stream()
+                        .filter(e -> e instanceof ItemEntity)
+                        .map(e -> (ItemEntity) e)
+                        .toList();
+            }
+            default -> {
+                return List.of();
+            }
+        }
     }
 
     protected @Nullable BlockEntity getPlayerCrosshairTargetBlockEntity(ServerPlayNetworking.Context context) {
@@ -231,6 +275,124 @@ public abstract class AbstractSpell implements ISpell {
             return BlockHitResult.createMissed(vec3d2, direction, BlockPos.ofFloored(vec3d2));
         } else {
             return hitResult;
+        }
+    }
+
+    protected record ItemConversionData(
+            Item from,
+            Item to,
+            int cost,
+            int resultAmount,
+            boolean greedyConversion
+    ) {
+        public ItemConversionData(Item from, Item to) {
+            this(from, to, 1, 1, false);
+        }
+
+        public ItemConversionData(Item from, Item to, boolean greedyConversion) {
+            this(from, to, 1, 1, greedyConversion);
+        }
+
+        public ItemConversionData(Item from, Item to, int cost, int resultAmount, boolean greedyConversion) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
+            this.resultAmount = resultAmount;
+            this.greedyConversion = greedyConversion;
+        }
+
+        public boolean canConvert(ServerPlayNetworking.Context context) {
+            ItemStack offhand = context.player().getOffHandStack();
+
+            return !offhand.isEmpty()
+                    && offhand.getCount() >= cost
+                    && offhand.getItem() == from;
+        }
+
+        public void convert(ServerPlayNetworking.Context context) {
+            ItemStack offhand = context.player().getOffHandStack();
+            PlayerEntity player = context.player();
+
+            if (!canConvert(context)) {
+                return;
+            }
+
+            int offhandAmount = offhand.getCount();
+
+            if (!greedyConversion) {
+                List<ItemStack> itemStacks = getItemStacks(to, resultAmount);
+
+                for (int i = 0; i < itemStacks.size(); i++) {
+                    if (i == 0 && offhandAmount == cost) {
+                        player.setStackInHand(Hand.OFF_HAND, itemStacks.get(i));
+                    }
+                    else {
+                        ItemStack stack = itemStacks.get(i);
+
+                        player.giveOrDropStack(stack);
+                    }
+                }
+
+            }
+            else {
+                int conversionAmount = (int) Math.floor((double) offhandAmount / cost);
+
+                int resultAmount = conversionAmount * this.resultAmount;
+                int costAmount = conversionAmount * this.cost;
+
+                offhand.decrement(costAmount);
+                List<ItemStack> results = getItemStacks(to, resultAmount);
+
+                for (int i = 0; i < results.size(); i++) {
+                    if (i == 0 && offhand.isEmpty()) {
+                        player.setStackInHand(Hand.OFF_HAND, results.get(i));
+                    }
+                    else {
+                        ItemStack stack = results.get(i);
+
+                        player.giveOrDropStack(stack);
+                    }
+                }
+            }
+        }
+
+        private static List<ItemStack> getItemStacks(Item to, int resultAmount) {
+            ArrayList<ItemStack> itemStacks = new ArrayList<>();
+
+            if (resultAmount <= 64) {
+                itemStacks.add(new ItemStack(to, resultAmount));
+            }
+            else {
+                int amount = resultAmount;
+                while (amount > 0) {
+                    int stackAmount = Math.min(amount, 64);
+                    itemStacks.add(new ItemStack(to, stackAmount));
+                    amount -= stackAmount;
+                }
+            }
+
+            return itemStacks;
+        }
+    }
+
+    protected record BlockConversionData(
+            Block from,
+            Block to
+    ) {
+        public BlockConversionData(Block from, Block to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        public boolean canConvert(ServerPlayNetworking.Context context, Block target) {
+            return target != null && target == from;
+        }
+
+        public void convert(ServerPlayNetworking.Context context, Block target, BlockPos targetPos) {
+            if (canConvert(context, target)) {
+                ServerWorld world = context.player().getServerWorld();
+                world.setBlockState(targetPos, to.getDefaultState());
+            }
         }
     }
 }

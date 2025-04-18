@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wandweaver.items.ItemsManager;
 import wandweaver.network.WandWeaverNetworking;
+import wandweaver.spells.AbstractSpell;
 import wandweaver.spells.SpellManager;
 import wandweaver.spells.impl.FeatherFallSpell;
 import wandweaver.spells.impl.IgniteSpell;
+import wandweaver.spells.impl.MendSpell;
 import wandweaver.spells.impl.StupifySpell;
 
 import java.util.List;
@@ -34,5 +36,6 @@ public class WandWeaver implements ModInitializer {
 		SpellManager.register(new IgniteSpell());
 		SpellManager.register(new StupifySpell());
 		SpellManager.register(new FeatherFallSpell());
+		SpellManager.register(new MendSpell());
 	}
 }
