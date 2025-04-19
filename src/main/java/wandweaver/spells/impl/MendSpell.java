@@ -194,7 +194,6 @@ public class MendSpell extends AbstractSpell {
         if (!itemEntities.isEmpty()) {
             ItemStack toRepairItemStack = null;
             RepairableComponent repairableComponent = null;
-            Integer maxDurability = null;
 
             // First, attempt to grab the tool to reset the cost.
             for (ItemEntity itemEntity : itemEntities) {

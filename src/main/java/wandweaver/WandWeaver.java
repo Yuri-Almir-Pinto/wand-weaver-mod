@@ -1,12 +1,10 @@
 package wandweaver;
 
 import net.fabricmc.api.ModInitializer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wandweaver.items.ItemsManager;
 import wandweaver.network.WandWeaverNetworking;
-import wandweaver.spells.AbstractSpell;
 import wandweaver.spells.SpellManager;
 import wandweaver.spells.impl.FeatherFallSpell;
 import wandweaver.spells.impl.IgniteSpell;
