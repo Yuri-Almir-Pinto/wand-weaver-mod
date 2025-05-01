@@ -1,6 +1,5 @@
 package wandweaver.spells.impl;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
@@ -20,12 +19,17 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
+import wandweaver.spells.context.ISpellCastingContext;
+import wandweaver.spells.context.data.IBlockConversionData;
+import wandweaver.spells.context.data.IItemConversionData;
+import wandweaver.spells.context.impl.data.BlockConversionData;
+import wandweaver.spells.context.impl.data.ItemConversionData;
 import wandweaver.utils.Direction;
 
 import java.util.List;
 
 public class MendSpell extends AbstractSpell {
-    private static final List<ItemConversionData> ITEM_CONVERSION_LIST = List.of(
+    private static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
             new ItemConversionData(Items.DAMAGED_ANVIL, Items.CHIPPED_ANVIL),
             new ItemConversionData(Items.CHIPPED_ANVIL, Items.ANVIL),
             new ItemConversionData(Items.BLAZE_POWDER, Items.BLAZE_ROD, 2, 1, true),
@@ -64,7 +68,7 @@ public class MendSpell extends AbstractSpell {
             new ItemConversionData(Items.STRING, Items.COBWEB, 5, 1, true)
     );
 
-    private static final List<BlockConversionData> BLOCK_CONVERSION_LIST = List.of(
+    private static final List<IBlockConversionData> BLOCK_CONVERSION_LIST = List.of(
             new BlockConversionData(Blocks.DAMAGED_ANVIL, Blocks.CHIPPED_ANVIL),
             new BlockConversionData(Blocks.CHIPPED_ANVIL, Blocks.ANVIL),
             new BlockConversionData(Blocks.CRACKED_DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICKS),
@@ -128,19 +132,16 @@ public class MendSpell extends AbstractSpell {
     }
 
     @Override
-    public void playerCast(ServerPlayNetworking.Context context, List<Direction> pattern) {
+    public void playerCast(ISpellCastingContext context, List<Direction> pattern) {
         ServerPlayerEntity player = context.player();
-
         ItemStack offhandStack = player.getOffHandStack();
 
         if (!offhandStack.isEmpty()) {
-            // Attempt converting the item into an unbroken state.
-            for (ItemConversionData conversionData : ITEM_CONVERSION_LIST) {
-                if (conversionData.canConvert(context)) {
-                    conversionData.convert(context);
-                    this.repairSound(context);
-                    return;
-                }
+            boolean successfulConversion = context.itemConversion().attemptConversion(ITEM_CONVERSION_LIST);
+
+            if (successfulConversion) {
+                this.repairSound(context);
+                return;
             }
 
             // Attempt repairing the durability of the offhand tool.
@@ -168,7 +169,7 @@ public class MendSpell extends AbstractSpell {
 
         // Attempt healing an entity if it's a "construct".
 
-        Entity targetEntity = this.getPlayerCrosshairTargetEntity(context);
+        Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
 
         if (targetEntity instanceof GolemEntity || targetEntity instanceof SnowGolemEntity) {
             LivingEntity construct = (LivingEntity) targetEntity;
@@ -189,7 +190,7 @@ public class MendSpell extends AbstractSpell {
 
         // Attempt reseting the repair cost of an item.
 
-        List<ItemEntity> itemEntities = this.getPlayerCrosshairTargetItems(context);
+        List<ItemEntity> itemEntities = context.targeting().getPlayerCrosshairTargetItems();
 
         if (!itemEntities.isEmpty()) {
             ItemStack toRepairItemStack = null;
@@ -262,17 +263,16 @@ public class MendSpell extends AbstractSpell {
 
         // Attempt mending a block into an unbroken state.
 
-        Block targetBlock = this.getPlayerCrosshairTargetBlock(context);
-        BlockPos targetBlockPos = this.getPlayerCrosshairTargetBlockPos(context);
+        Block targetBlock = context.targeting().getPlayerCrosshairTargetBlock();
+        BlockPos targetBlockPos = context.targeting().getPlayerCrosshairTargetBlockPos();
 
-        for (BlockConversionData conversionData : BLOCK_CONVERSION_LIST) {
-            if (conversionData.canConvert(context, targetBlock)) {
-                conversionData.convert(context, targetBlock, targetBlockPos);
-                this.repairSound(context);
-                return;
-            }
+        boolean successfulBlockConversion = context
+                .blockConversion()
+                .attemptConversion(targetBlock, targetBlockPos, BLOCK_CONVERSION_LIST);
+
+        if (successfulBlockConversion) {
+            this.repairSound(context);
         }
-
 
     }
 
@@ -284,9 +284,9 @@ public class MendSpell extends AbstractSpell {
         return itemStack.get(DataComponentTypes.REPAIRABLE) != null;
     }
 
-    private void repairSound(ServerPlayNetworking.Context context) {
+    private void repairSound(ISpellCastingContext context) {
 //        this.playSoundOnPlayer(context, SoundEvents.BLOCK_AMETHYST_BLOCK_STEP);
-        this.playSoundOnPlayer(context, SoundEvents.ENTITY_IRON_GOLEM_REPAIR);
+        context.sound().playSoundOnPlayer(SoundEvents.ENTITY_IRON_GOLEM_REPAIR);
     }
 }
 

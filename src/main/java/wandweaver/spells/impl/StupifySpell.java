@@ -1,6 +1,5 @@
 package wandweaver.spells.impl;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +12,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
+import wandweaver.spells.context.ISpellCastingContext;
 import wandweaver.utils.Direction;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class StupifySpell extends AbstractSpell {
     }
 
     @Override
-    public void playerCast(ServerPlayNetworking.Context context, List<Direction> pattern) {
+    public void playerCast(ISpellCastingContext context, List<Direction> pattern) {
         PlayerEntity player = context.player();
         ItemStack offhandStack = player.getOffHandStack();
 
@@ -79,7 +79,7 @@ public class StupifySpell extends AbstractSpell {
             PotionContentsComponent newPotionContents = new PotionContentsComponent(Potions.AWKWARD);
             offhandStack.set(DataComponentTypes.POTION_CONTENTS, newPotionContents);
 
-            this.playSoundOnPlayer(context, SoundEvents.ITEM_BOTTLE_FILL);
+            context.sound().playSoundOnPlayer(SoundEvents.ITEM_BOTTLE_FILL);
         }
     }
 }

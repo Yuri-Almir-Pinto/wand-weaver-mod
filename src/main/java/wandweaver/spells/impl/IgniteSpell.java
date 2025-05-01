@@ -1,29 +1,32 @@
 package wandweaver.spells.impl;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.*;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.mixin.AbstractFurnaceBlockEntityAccessor;
 import wandweaver.spells.AbstractSpell;
+import wandweaver.spells.context.ISpellCastingContext;
+import wandweaver.spells.context.data.IItemConversionData;
+import wandweaver.spells.context.impl.data.ItemConversionData;
 import wandweaver.utils.Direction;
 
 import java.util.List;
 
 public class IgniteSpell extends AbstractSpell {
-
+    public static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
+            new ItemConversionData(Items.STICK, Items.TORCH, true),
+            new ItemConversionData(Items.POTION, Items.GLASS_BOTTLE, true),
+            new ItemConversionData(Items.WATER_BUCKET, Items.BUCKET, true),
+            new ItemConversionData(Items.WET_SPONGE, Items.SPONGE, true)
+    );
     @Override
     public List<Direction> getBasePattern() {
         return List.of(
@@ -55,52 +58,28 @@ public class IgniteSpell extends AbstractSpell {
     }
 
     @Override
-    public void playerCast(ServerPlayNetworking.Context context, List<Direction> pattern) {
+    public void playerCast(ISpellCastingContext context, List<Direction> pattern) {
         ServerPlayerEntity player = context.player();
-
         ItemStack offhandItemStack = player.getOffHandStack();
 
-        if (!offhandItemStack.isEmpty() && offhandItemStack.getItem() == Items.STICK) {
-            int stickCount = offhandItemStack.getCount();
-            int torchesAmount = Math.clamp(stickCount, 1, 3);
+        if (!offhandItemStack.isEmpty()) {
+            boolean successfulConversion = context.itemConversion().attemptConversion(IgniteSpell.ITEM_CONVERSION_LIST);
 
-            this.convertItem(context, offhandItemStack, Items.TORCH, torchesAmount);
-
-            this.playSoundOnPlayer(context, SoundEvents.ITEM_FLINTANDSTEEL_USE);
-            return;
+            if (successfulConversion) {
+                context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
+                return;
+            }
         }
 
-        boolean driedOffhand = false;
-
-        if (!offhandItemStack.isEmpty() && offhandItemStack.getItem() == Items.POTION) {
-            player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT, new ItemStack(Items.GLASS_BOTTLE, offhandItemStack.getCount()));
-            driedOffhand = true;
-        }
-
-        if (!offhandItemStack.isEmpty() && offhandItemStack.getItem() == Items.WATER_BUCKET) {
-            player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT, new ItemStack(Items.BUCKET, offhandItemStack.getCount()));
-            driedOffhand = true;
-        }
-
-        if (!offhandItemStack.isEmpty() && offhandItemStack.getItem() == Items.WET_SPONGE) {
-            player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT, new ItemStack(Items.SPONGE, offhandItemStack.getCount()));
-            driedOffhand = true;
-        }
-
-        if (driedOffhand) {
-            this.playSoundOnPlayer(context, SoundEvents.BLOCK_FIRE_EXTINGUISH);
-            return;
-        }
-
-        Entity targetEntity = this.getPlayerCrosshairTargetEntity(context);
+        Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
 
         if (targetEntity != null && !(targetEntity instanceof CreeperEntity)) {
             targetEntity.setOnFireFor(4);
 
-            this.playSoundOnPlayer(context, SoundEvents.ENTITY_BLAZE_SHOOT);
+            context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BLAZE_SHOOT);
         }
 
-        BlockEntity targetBlockEntity = this.getPlayerCrosshairTargetBlockEntity(context);
+        BlockEntity targetBlockEntity = context.targeting().getPlayerCrosshairTargetBlockEntity();
 
         if (targetBlockEntity instanceof AbstractFurnaceBlockEntity furnaceBlock) {
             AbstractFurnaceBlockEntityAccessor furnaceAccessor = (AbstractFurnaceBlockEntityAccessor) furnaceBlock;
@@ -122,16 +101,16 @@ public class IgniteSpell extends AbstractSpell {
                     Block.NOTIFY_ALL
             );
 
-            this.playSoundOnPlayer(context, SoundEvents.ITEM_FLINTANDSTEEL_USE);
+            context.sound().playSoundOnPlayer(SoundEvents.ITEM_FLINTANDSTEEL_USE);
             return;
         }
 
         ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
 
-        boolean success = this.interactAsIfHolding(context, flintAndSteel);
+        boolean successfulInteraction = context.interaction().interactAsIfHolding(flintAndSteel);
 
-        if (success) {
-            this.playSoundOnPlayer(context, SoundEvents.ITEM_FLINTANDSTEEL_USE);
+        if (successfulInteraction) {
+            context.sound().playSoundOnPlayer(SoundEvents.ITEM_FLINTANDSTEEL_USE);
         }
     }
 }

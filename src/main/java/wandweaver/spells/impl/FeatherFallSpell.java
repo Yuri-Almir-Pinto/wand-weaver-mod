@@ -1,12 +1,12 @@
 package wandweaver.spells.impl;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
+import wandweaver.spells.context.ISpellCastingContext;
 import wandweaver.utils.Direction;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class FeatherFallSpell extends AbstractSpell {
     }
 
     @Override
-    public void playerCast(ServerPlayNetworking.Context context, List<Direction> pattern) {
+    public void playerCast(ISpellCastingContext context, List<Direction> directions) {
         ServerPlayerEntity player = context.player();
 
         player.addStatusEffect(

@@ -1,6 +1,10 @@
 package wandweaver.spells;
 
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
+import wandweaver.spells.context.ISpellCastingContext;
+import wandweaver.spells.context.impl.SpellCastingContext;
+import wandweaver.spells.context.impl.utilities.*;
 import wandweaver.spells.impl.FeatherFallSpell;
 import wandweaver.spells.impl.IgniteSpell;
 import wandweaver.spells.impl.MendSpell;
@@ -43,5 +47,22 @@ public class SpellManager {
 
     public static @Nullable ISpell getSpellById(String id) {
         return spellsById.get(id);
+    }
+
+    public static ISpellCastingContext getSpellCastingContext(ServerPlayerEntity player) {
+        BlockConversionUtilities blockConversion = new BlockConversionUtilities(player);
+        ItemConversionUtilities itemConversion = new ItemConversionUtilities(player);
+        TargetingUtilities targeting = new TargetingUtilities(player);
+        InteractionUtilities interaction = new InteractionUtilities(player, targeting);
+        SoundUtilities sound = new SoundUtilities(player);
+
+        return new SpellCastingContext(
+                player,
+                sound,
+                interaction,
+                targeting,
+                blockConversion,
+                itemConversion
+        );
     }
 }

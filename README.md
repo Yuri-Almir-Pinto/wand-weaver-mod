@@ -6,8 +6,6 @@
 - Add furnace recipes when casting the ignite spell with a recipe in the offhand.
 - Add a function for the ignite spell to create a campfire if the fire was set in a block with 3 or more logs.
 - Update the ignite spell to use the new goodies present in the AbstractSpell class.
-- Turn a bunch of methods in the AbstractClass static, since they don't use any instance variables.
-- Maybe attempt to decouple everything from the ServerPlayNetworking.Context class? Since it's for Fabric, and I *may* want to port this to NeoForge in the future.
 - Add a client hook while casting, to allow spells to change the hud and stuff to give extra, useful information.
 
 # Spell ideas
