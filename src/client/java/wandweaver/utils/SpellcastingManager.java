@@ -5,12 +5,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import wandweaver.WandWeaver;
 import wandweaver.WandWeaverClient;
-import wandweaver.configs.WandWeaverConfig;
+import wandweaver.configs.WandWeaverClientConfig;
 import wandweaver.items.ItemsManager;
 import wandweaver.network.payloads.CastSpellC2SPayload;
 import wandweaver.network.payloads.CheckSpellC2SPayload;
@@ -88,22 +87,22 @@ public class SpellcastingManager {
 
         boolean newDirection = false;
 
-        if (pitchAccum >= WandWeaverConfig.angleThreshold()) {
+        if (pitchAccum >= WandWeaverClientConfig.angleThreshold()) {
             add(Direction.DOWN);
             pitchAccum -= 30;
             newDirection = true;
         }
-        if (pitchAccum <= -WandWeaverConfig.angleThreshold()) {
+        if (pitchAccum <= -WandWeaverClientConfig.angleThreshold()) {
             add(Direction.UP);
             pitchAccum += 30;
             newDirection = true;
         }
-        if (yawAccum >= WandWeaverConfig.angleThreshold()) {
+        if (yawAccum >= WandWeaverClientConfig.angleThreshold()) {
             add(Direction.RIGHT);
             yawAccum -= 30;
             newDirection = true;
         }
-        if (yawAccum <= -WandWeaverConfig.angleThreshold()) {
+        if (yawAccum <= -WandWeaverClientConfig.angleThreshold()) {
             add(Direction.LEFT);
             yawAccum += 30;
             newDirection = true;
@@ -206,7 +205,7 @@ public class SpellcastingManager {
     }
 
     public static int toProgress(float value) {
-        return (int) (Math.abs(value) / WandWeaverConfig.angleThreshold() * 100);
+        return (int) (Math.abs(value) / WandWeaverClientConfig.angleThreshold() * 100);
     }
 
     public static void setProgress(Direction direction, int progress) {
