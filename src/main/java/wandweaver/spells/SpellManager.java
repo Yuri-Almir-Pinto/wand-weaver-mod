@@ -1,6 +1,10 @@
 package wandweaver.spells;
 
 import org.jetbrains.annotations.Nullable;
+import wandweaver.spells.impl.FeatherFallSpell;
+import wandweaver.spells.impl.IgniteSpell;
+import wandweaver.spells.impl.MendSpell;
+import wandweaver.spells.impl.StupifySpell;
 import wandweaver.utils.Direction;
 
 import java.util.HashMap;
@@ -10,7 +14,7 @@ public class SpellManager {
     private static final HashMap<List<Direction>, ISpell> spellsByPattern = new HashMap<>();
     private static final HashMap<String, ISpell> spellsById = new HashMap<>();
 
-    public static void register(ISpell spell) {
+    private static void register(ISpell spell) {
         List<Direction> pattern = spell.getBasePattern();
 
         if (spellsByPattern.containsKey(pattern)) {
@@ -24,6 +28,13 @@ public class SpellManager {
         }
 
         spellsById.put(spell.getIdentifier(), spell);
+    }
+
+    public static void register() {
+        SpellManager.register(new IgniteSpell());
+        SpellManager.register(new StupifySpell());
+        SpellManager.register(new FeatherFallSpell());
+        SpellManager.register(new MendSpell());
     }
 
     public static @Nullable ISpell getSpellByPattern(List<Direction> pattern) {

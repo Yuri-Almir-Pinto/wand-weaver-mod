@@ -31,9 +31,6 @@ public class WandWeaver implements ModInitializer {
 		ItemsManager.initialize();
 
 		// Spell registration
-		SpellManager.register(new IgniteSpell());
-		SpellManager.register(new StupifySpell());
-		SpellManager.register(new FeatherFallSpell());
-		SpellManager.register(new MendSpell());
+		SpellManager.register();
 	}
 }
