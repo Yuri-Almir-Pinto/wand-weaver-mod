@@ -1,11 +1,7 @@
 # Todo
 
 - Add a cooldown option to spells for future use.
-- Fix bug with ignite when inventory is full, the torches aren't added.
 - Fix text breaking out of the screen when casting a spell with a long description.
-- Add furnace recipes when casting the ignite spell with a recipe in the offhand.
-- Add a function for the ignite spell to create a campfire if the fire was set in a block with 3 or more logs.
-- Update the ignite spell to use the new goodies present in the AbstractSpell class.
 - Add a client hook while casting, to allow spells to change the hud and stuff to give extra, useful information.
 - Add the common config to the Spellcasting context, and remove the pattern of the spell from the spell itself to config files.
 
@@ -19,4 +15,4 @@
 - Ambrosia: After sacrificing a golden apple, the player can summon an infinite food source called ambrosia. Ambrosia restores hunger indefinitely, but can only restore only up to 2 saturation, making health regeneration slow and requiring the player to constantly eat ambrosia.
 - Explosion: A spell which creates an explosion centered on the player. It deals a lot of damage to the player, but has a passive looting effect, and beheads all killed mobs.
 - Aqueus: A spell which creates a water source block at the targeted location. The water source block can be used to create infinite water sources.
-- Ascend: Teleports the caster to the highest Y position in their current X and Z coordinates.
+- Growth: A spell involving creating trees, mushrooms, grass, and the like.
