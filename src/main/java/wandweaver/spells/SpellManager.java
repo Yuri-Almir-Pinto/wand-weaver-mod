@@ -5,10 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.context.ISpellCastingContext;
 import wandweaver.spells.context.impl.SpellCastingContext;
 import wandweaver.spells.context.impl.utilities.*;
-import wandweaver.spells.impl.FeatherFallSpell;
-import wandweaver.spells.impl.IgniteSpell;
-import wandweaver.spells.impl.MendSpell;
-import wandweaver.spells.impl.StupifySpell;
+import wandweaver.spells.impl.*;
 import wandweaver.utils.Direction;
 
 import java.util.HashMap;
@@ -39,6 +36,7 @@ public class SpellManager {
         SpellManager.register(new StupifySpell());
         SpellManager.register(new FeatherFallSpell());
         SpellManager.register(new MendSpell());
+        SpellManager.register(new AscendSpell());
     }
 
     public static @Nullable ISpell getSpellByPattern(List<Direction> pattern) {

@@ -13,6 +13,9 @@
   "spell.description.featherFall": "Breaks your fall with a feather falling effect.",
   "spell.name.featherFall": "Feather Fall",
 
+  "spell.description.ascend": "Brings you to the highest block above you.",
+  "spell.name.ascend": "Ascend",
+
   "spell.description.mend": "Repairs broken blocks, broken items, damaged constructs, repairs items in your off-hand, and reduces the repair cost of items if cast on them while on the ground with their material.",
   "spell.name.mend": "Mend"
 }
