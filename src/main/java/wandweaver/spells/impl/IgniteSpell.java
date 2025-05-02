@@ -5,15 +5,15 @@ import net.minecraft.block.entity.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.recipe.*;
+import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.mixin.AbstractFurnaceBlockEntityAccessor;
@@ -26,12 +26,14 @@ import wandweaver.utils.Direction;
 import java.util.List;
 
 public class IgniteSpell extends AbstractSpell {
-    public static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
-            new ItemConversionData(Items.STICK, Items.TORCH, true),
+    private static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
+            new ItemConversionData(Items.STICK, Items.TORCH, 1, 4, true),
             new ItemConversionData(Items.POTION, Items.GLASS_BOTTLE, true),
-            new ItemConversionData(Items.WATER_BUCKET, Items.BUCKET, true),
-            new ItemConversionData(Items.WET_SPONGE, Items.SPONGE, true)
+            new ItemConversionData(Items.WATER_BUCKET, Items.BUCKET, true)
     );
+
+    private static final ServerRecipeManager.MatchGetter<SingleStackRecipeInput, ? extends AbstractCookingRecipe> matchGetter =
+            ServerRecipeManager.createCachedMatchGetter(RecipeType.SMELTING);
     @Override
     public List<Direction> getBasePattern() {
         return List.of(
@@ -68,10 +70,31 @@ public class IgniteSpell extends AbstractSpell {
         ItemStack offhandItemStack = player.getOffHandStack();
 
         if (!offhandItemStack.isEmpty()) {
+            Item offhandItem = offhandItemStack.getItem();
             boolean successfulConversion = context.itemConversion().attemptConversion(IgniteSpell.ITEM_CONVERSION_LIST);
 
             if (successfulConversion) {
-                context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
+                if (offhandItem == Items.TORCH) {
+                    context.sound().playSoundOnPlayer(SoundEvents.ITEM_FLINTANDSTEEL_USE);
+                }
+                else {
+                    context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
+                }
+
+                return;
+
+            }
+
+            SingleStackRecipeInput input = new SingleStackRecipeInput(offhandItemStack);
+            RecipeEntry<? extends AbstractCookingRecipe> recipeEntry =
+                    matchGetter.getFirstMatch(input, player.getServerWorld()).orElse(null);
+
+            if (recipeEntry != null) {
+                AbstractCookingRecipe recipe = recipeEntry.value();
+                ItemStack result = recipe.craft(input, player.getServerWorld().getRegistryManager());
+                player.getInventory().offerOrDrop(result);
+                offhandItemStack.decrement(1);
+                context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BLAZE_SHOOT);
                 return;
             }
         }
