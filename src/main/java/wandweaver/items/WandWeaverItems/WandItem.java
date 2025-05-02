@@ -1,13 +1,18 @@
 package wandweaver.items.WandWeaverItems;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.consume.UseAction;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import wandweaver.WandWeaver;
 
 public class WandItem extends Item {
@@ -57,5 +62,8 @@ public class WandItem extends Item {
         return false;
     }
 
-
+    @Override
+    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+        stack.setCount(0);
+    }
 }

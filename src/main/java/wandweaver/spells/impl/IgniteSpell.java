@@ -2,6 +2,7 @@ package wandweaver.spells.impl;
 
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.CreeperEntity;
@@ -28,12 +29,14 @@ import java.util.List;
 public class IgniteSpell extends AbstractSpell {
     private static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
             new ItemConversionData(Items.STICK, Items.TORCH, 1, 4, true),
+            new ItemConversionData(Items.ROTTEN_FLESH, Items.LEATHER, true),
             new ItemConversionData(Items.POTION, Items.GLASS_BOTTLE, true),
             new ItemConversionData(Items.WATER_BUCKET, Items.BUCKET, true)
     );
 
     private static final ServerRecipeManager.MatchGetter<SingleStackRecipeInput, ? extends AbstractCookingRecipe> matchGetter =
             ServerRecipeManager.createCachedMatchGetter(RecipeType.SMELTING);
+
     @Override
     public List<Direction> getBasePattern() {
         return List.of(
@@ -74,7 +77,7 @@ public class IgniteSpell extends AbstractSpell {
             boolean successfulConversion = context.itemConversion().attemptConversion(IgniteSpell.ITEM_CONVERSION_LIST);
 
             if (successfulConversion) {
-                if (offhandItem == Items.TORCH) {
+                if (offhandItem == Items.STICK) {
                     context.sound().playSoundOnPlayer(SoundEvents.ITEM_FLINTANDSTEEL_USE);
                 }
                 else {
@@ -97,14 +100,6 @@ public class IgniteSpell extends AbstractSpell {
                 context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BLAZE_SHOOT);
                 return;
             }
-        }
-
-        Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
-
-        if (targetEntity != null && !(targetEntity instanceof CreeperEntity)) {
-            targetEntity.setOnFireFor(4);
-
-            context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BLAZE_SHOOT);
         }
 
         List<ItemEntity> groundEntityStacks = context.targeting().getPlayerCrosshairTargetItems();
@@ -140,8 +135,9 @@ public class IgniteSpell extends AbstractSpell {
         if (targetBlockEntity instanceof AbstractFurnaceBlockEntity furnaceBlock) {
             AbstractFurnaceBlockEntityAccessor furnaceAccessor = (AbstractFurnaceBlockEntityAccessor) furnaceBlock;
             // For some reason, the burn ticks are offset by 1. 200/400 does not complete a recipe.
-            int extraTime = furnaceBlock instanceof SmokerBlockEntity || furnaceBlock instanceof BlastFurnaceBlockEntity
-                    ? 201 : 401;
+            int amountOfItems = 4;
+            int extraTime = ((furnaceBlock instanceof SmokerBlockEntity || furnaceBlock instanceof BlastFurnaceBlockEntity
+                    ? 100 : 200) * amountOfItems) + 1;
 
             if (furnaceAccessor.getLitTimeRemaining() > 0) {
                 furnaceAccessor.setLitTimeRemaining(furnaceAccessor.getLitTimeRemaining() + extraTime);
@@ -162,12 +158,21 @@ public class IgniteSpell extends AbstractSpell {
             return;
         }
 
-        ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL);
+        ItemStack flintAndSteel = new ItemStack(Items.FLINT_AND_STEEL, 1);
 
         boolean successfulInteraction = context.interaction().interactAsIfHolding(flintAndSteel);
 
         if (successfulInteraction) {
             context.sound().playSoundOnPlayer(SoundEvents.ITEM_FLINTANDSTEEL_USE);
+        }
+        else {
+            Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
+
+            if (targetEntity != null) {
+                targetEntity.setOnFireFor(8);
+
+                context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BLAZE_SHOOT);
+            }
         }
     }
 }

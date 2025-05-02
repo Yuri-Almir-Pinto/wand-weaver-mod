@@ -7,6 +7,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import wandweaver.spells.context.utilities.IInteractionUtilities;
+import wandweaver.utils.EphemeralItems;
 
 import java.util.function.Supplier;
 
@@ -23,18 +24,12 @@ public class InteractionUtilities implements IInteractionUtilities {
         HitResult hitResult = this.targeting.getPlayerCrosshairTarget();
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
-            boolean success = this.interactBlockAsIfHolding(itemStack);
-
-            if (success) {
-                return success;
-            }
-
-            return this.interactItemAsIfHolding(itemStack);
+            return this.interactBlockAsIfHolding(itemStack);
         } else if (hitResult.getType() == HitResult.Type.ENTITY) {
             return this.interactEntityAsIfHolding(itemStack);
+        } else {
+            return this.interactItemAsIfHolding(itemStack);
         }
-
-        return false;
     }
 
     public boolean interactEntityAsIfHolding(ItemStack itemStack) {
@@ -75,19 +70,23 @@ public class InteractionUtilities implements IInteractionUtilities {
     }
 
     public boolean sneakAndSelectItem(ItemStack itemStack, Supplier<Boolean> func) {
-        ItemStack originalItem = this.player.getMainHandStack();
+        ItemStack wandItem = this.player.getMainHandStack();
 
-        this.player.getInventory().setSelectedStack(itemStack);
+        this.player.getInventory().setSelectedStack(EphemeralItems.turnEphemeral(itemStack));
 
         boolean originalSneaking = player.isSneaking();
 
-        this.player.setSneaking(false);
+        // Forces the player to be sneaking, to avoid any interaction that isn't the casting of a spell, since the
+        // casting of a spell is certainly the desired action if the player is currently casting one.
+        this.player.setSneaking(true);
 
         boolean result = func.get();
 
-        this.player.getInventory().setSelectedStack(originalItem);
+        this.player.getInventory().setSelectedStack(wandItem);
 
         this.player.setSneaking(originalSneaking);
+
+        itemStack.setCount(0);
 
         return result;
     }

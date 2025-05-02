@@ -1,5 +1,6 @@
 package wandweaver.spells.context.utilities;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public interface IInteractionUtilities {
@@ -7,5 +8,4 @@ public interface IInteractionUtilities {
     boolean interactEntityAsIfHolding(ItemStack itemStack);
     boolean interactBlockAsIfHolding(ItemStack itemStack);
     boolean interactItemAsIfHolding(ItemStack itemStack);
-
 }
