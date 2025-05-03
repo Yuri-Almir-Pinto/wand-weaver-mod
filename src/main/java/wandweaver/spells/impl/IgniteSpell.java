@@ -28,10 +28,11 @@ import java.util.List;
 
 public class IgniteSpell extends AbstractSpell {
     private static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
-            new ItemConversionData(Items.STICK, Items.TORCH, 1, 4, true),
-            new ItemConversionData(Items.ROTTEN_FLESH, Items.LEATHER, true),
-            new ItemConversionData(Items.POTION, Items.GLASS_BOTTLE, true),
-            new ItemConversionData(Items.WATER_BUCKET, Items.BUCKET, true)
+            ItemConversionData.Builder.begin(Items.STICK, Items.TORCH)
+                    .cost(1).result(4).greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.ROTTEN_FLESH, Items.LEATHER).greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.POTION, Items.GLASS_BOTTLE).greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.WATER_BUCKET, Items.BUCKET).greedy(true).build()
     );
 
     private static final ServerRecipeManager.MatchGetter<SingleStackRecipeInput, ? extends AbstractCookingRecipe> matchGetter =

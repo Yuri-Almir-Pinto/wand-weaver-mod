@@ -30,79 +30,114 @@ import java.util.List;
 
 public class MendSpell extends AbstractSpell {
     private static final List<IItemConversionData> ITEM_CONVERSION_LIST = List.of(
-            new ItemConversionData(Items.DAMAGED_ANVIL, Items.CHIPPED_ANVIL),
-            new ItemConversionData(Items.CHIPPED_ANVIL, Items.ANVIL),
-            new ItemConversionData(Items.BLAZE_POWDER, Items.BLAZE_ROD, 2, 1, true),
-            new ItemConversionData(Items.CRACKED_DEEPSLATE_BRICKS, Items.DEEPSLATE_BRICKS, true),
-            new ItemConversionData(Items.CRACKED_DEEPSLATE_TILES, Items.DEEPSLATE_TILES, true),
-            new ItemConversionData(Items.CRACKED_POLISHED_BLACKSTONE_BRICKS, Items.POLISHED_BLACKSTONE_BRICKS, true),
-            new ItemConversionData(Items.CRACKED_STONE_BRICKS, Items.STONE_BRICKS, true),
-            new ItemConversionData(Items.CRACKED_NETHER_BRICKS, Items.NETHER_BRICKS, true),
-            new ItemConversionData(Items.INFESTED_CRACKED_STONE_BRICKS, Items.INFESTED_STONE_BRICKS, true),
-            new ItemConversionData(Items.COBBLESTONE, Items.STONE, true),
-            new ItemConversionData(Items.COBBLED_DEEPSLATE, Items.DEEPSLATE, true),
-            new ItemConversionData(Items.STRIPPED_OAK_WOOD, Items.OAK_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_OAK_LOG, Items.OAK_LOG, true),
-            new ItemConversionData(Items.STRIPPED_DARK_OAK_WOOD, Items.DARK_OAK_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_DARK_OAK_LOG, Items.DARK_OAK_LOG, true),
-            new ItemConversionData(Items.STRIPPED_PALE_OAK_WOOD, Items.PALE_OAK_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_PALE_OAK_LOG, Items.PALE_OAK_LOG, true),
-            new ItemConversionData(Items.STRIPPED_ACACIA_WOOD, Items.ACACIA_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_ACACIA_LOG, Items.ACACIA_LOG, true),
-            new ItemConversionData(Items.STRIPPED_CHERRY_WOOD, Items.CHERRY_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_CHERRY_LOG, Items.CHERRY_LOG, true),
-            new ItemConversionData(Items.STRIPPED_BIRCH_WOOD, Items.BIRCH_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_BIRCH_LOG, Items.BIRCH_LOG, true),
-            new ItemConversionData(Items.STRIPPED_JUNGLE_WOOD, Items.JUNGLE_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_JUNGLE_LOG, Items.JUNGLE_LOG, true),
-            new ItemConversionData(Items.STRIPPED_SPRUCE_WOOD, Items.SPRUCE_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_SPRUCE_LOG, Items.SPRUCE_LOG, true),
-            new ItemConversionData(Items.STRIPPED_WARPED_STEM, Items.WARPED_STEM, true),
-            new ItemConversionData(Items.STRIPPED_WARPED_HYPHAE, Items.WARPED_HYPHAE, true),
-            new ItemConversionData(Items.STRIPPED_CRIMSON_STEM, Items.CRIMSON_STEM, true),
-            new ItemConversionData(Items.STRIPPED_CRIMSON_HYPHAE, Items.CRIMSON_HYPHAE, true),
-            new ItemConversionData(Items.STRIPPED_MANGROVE_WOOD, Items.MANGROVE_WOOD, true),
-            new ItemConversionData(Items.STRIPPED_MANGROVE_LOG, Items.MANGROVE_LOG, true),
-            new ItemConversionData(Items.STRIPPED_BAMBOO_BLOCK, Items.BAMBOO_BLOCK, true),
-            new ItemConversionData(Items.BONE_MEAL, Items.BONE, 3, 1, true),
-            new ItemConversionData(Items.STRING, Items.COBWEB, 5, 1, true)
+            ItemConversionData.Builder.begin(Items.DAMAGED_ANVIL, Items.CHIPPED_ANVIL).build(),
+            ItemConversionData.Builder.begin(Items.CHIPPED_ANVIL, Items.ANVIL).build(),
+            ItemConversionData.Builder.begin(Items.BLAZE_POWDER, Items.BLAZE_ROD)
+                    .cost(2).result(1).greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.CRACKED_DEEPSLATE_BRICKS, Items.DEEPSLATE_BRICKS)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.CRACKED_DEEPSLATE_TILES, Items.DEEPSLATE_TILES)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.CRACKED_POLISHED_BLACKSTONE_BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.CRACKED_STONE_BRICKS, Items.STONE_BRICKS)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.CRACKED_NETHER_BRICKS, Items.NETHER_BRICKS)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.INFESTED_CRACKED_STONE_BRICKS, Items.INFESTED_STONE_BRICKS)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.COBBLESTONE, Items.STONE)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.COBBLED_DEEPSLATE, Items.DEEPSLATE)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_OAK_WOOD, Items.OAK_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_OAK_LOG, Items.OAK_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_DARK_OAK_WOOD, Items.DARK_OAK_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_DARK_OAK_LOG, Items.DARK_OAK_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_PALE_OAK_WOOD, Items.PALE_OAK_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_PALE_OAK_LOG, Items.PALE_OAK_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_ACACIA_WOOD, Items.ACACIA_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_ACACIA_LOG, Items.ACACIA_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_CHERRY_WOOD, Items.CHERRY_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_CHERRY_LOG, Items.CHERRY_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_BIRCH_WOOD, Items.BIRCH_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_BIRCH_LOG, Items.BIRCH_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_JUNGLE_WOOD, Items.JUNGLE_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_JUNGLE_LOG, Items.JUNGLE_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_SPRUCE_WOOD, Items.SPRUCE_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_SPRUCE_LOG, Items.SPRUCE_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_WARPED_STEM, Items.WARPED_STEM)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_WARPED_HYPHAE, Items.WARPED_HYPHAE)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_CRIMSON_STEM, Items.CRIMSON_STEM)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_CRIMSON_HYPHAE, Items.CRIMSON_HYPHAE)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_MANGROVE_WOOD, Items.MANGROVE_WOOD)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_MANGROVE_LOG, Items.MANGROVE_LOG)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRIPPED_BAMBOO_BLOCK, Items.BAMBOO_BLOCK)
+                    .greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.BONE_MEAL, Items.BONE)
+                    .cost(3).result(1).greedy(true).build(),
+            ItemConversionData.Builder.begin(Items.STRING, Items.COBWEB)
+                    .cost(5).result(1).greedy(true).build()
     );
 
     private static final List<IBlockConversionData> BLOCK_CONVERSION_LIST = List.of(
-            new BlockConversionData(Blocks.DAMAGED_ANVIL, Blocks.CHIPPED_ANVIL),
-            new BlockConversionData(Blocks.CHIPPED_ANVIL, Blocks.ANVIL),
-            new BlockConversionData(Blocks.CRACKED_DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICKS),
-            new BlockConversionData(Blocks.CRACKED_DEEPSLATE_TILES, Blocks.DEEPSLATE_TILES),
-            new BlockConversionData(Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICKS),
-            new BlockConversionData(Blocks.CRACKED_STONE_BRICKS, Blocks.STONE_BRICKS),
-            new BlockConversionData(Blocks.CRACKED_NETHER_BRICKS, Blocks.NETHER_BRICKS),
-            new BlockConversionData(Blocks.INFESTED_CRACKED_STONE_BRICKS, Blocks.INFESTED_STONE_BRICKS),
-            new BlockConversionData(Blocks.COBBLESTONE, Blocks.STONE),
-            new BlockConversionData(Blocks.COBBLED_DEEPSLATE, Blocks.DEEPSLATE),
-            new BlockConversionData(Blocks.STRIPPED_OAK_WOOD, Blocks.OAK_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_OAK_LOG, Blocks.OAK_LOG),
-            new BlockConversionData(Blocks.STRIPPED_DARK_OAK_WOOD, Blocks.DARK_OAK_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_DARK_OAK_LOG, Blocks.DARK_OAK_LOG),
-            new BlockConversionData(Blocks.STRIPPED_PALE_OAK_WOOD, Blocks.PALE_OAK_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_PALE_OAK_LOG, Blocks.PALE_OAK_LOG),
-            new BlockConversionData(Blocks.STRIPPED_ACACIA_WOOD, Blocks.ACACIA_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_ACACIA_LOG, Blocks.ACACIA_LOG),
-            new BlockConversionData(Blocks.STRIPPED_CHERRY_WOOD, Blocks.CHERRY_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_CHERRY_LOG, Blocks.CHERRY_LOG),
-            new BlockConversionData(Blocks.STRIPPED_BIRCH_WOOD, Blocks.BIRCH_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_BIRCH_LOG, Blocks.BIRCH_LOG),
-            new BlockConversionData(Blocks.STRIPPED_JUNGLE_WOOD, Blocks.JUNGLE_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_JUNGLE_LOG, Blocks.JUNGLE_LOG),
-            new BlockConversionData(Blocks.STRIPPED_SPRUCE_WOOD, Blocks.SPRUCE_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_SPRUCE_LOG, Blocks.SPRUCE_LOG),
-            new BlockConversionData(Blocks.STRIPPED_WARPED_STEM, Blocks.WARPED_STEM),
-            new BlockConversionData(Blocks.STRIPPED_WARPED_HYPHAE, Blocks.WARPED_HYPHAE),
-            new BlockConversionData(Blocks.STRIPPED_CRIMSON_STEM, Blocks.CRIMSON_STEM),
-            new BlockConversionData(Blocks.STRIPPED_CRIMSON_HYPHAE, Blocks.CRIMSON_HYPHAE),
-            new BlockConversionData(Blocks.STRIPPED_MANGROVE_WOOD, Blocks.MANGROVE_WOOD),
-            new BlockConversionData(Blocks.STRIPPED_MANGROVE_LOG, Blocks.MANGROVE_LOG),
-            new BlockConversionData(Blocks.STRIPPED_BAMBOO_BLOCK, Blocks.BAMBOO_BLOCK)
+            BlockConversionData.Builder.begin(Blocks.DAMAGED_ANVIL, Blocks.CHIPPED_ANVIL).build(),
+            BlockConversionData.Builder.begin(Blocks.CHIPPED_ANVIL, Blocks.ANVIL).build(),
+            BlockConversionData.Builder.begin(Blocks.CRACKED_DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICKS).build(),
+            BlockConversionData.Builder.begin(Blocks.CRACKED_DEEPSLATE_TILES, Blocks.DEEPSLATE_TILES).build(),
+            BlockConversionData.Builder.begin(Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICKS).build(),
+            BlockConversionData.Builder.begin(Blocks.CRACKED_STONE_BRICKS, Blocks.STONE_BRICKS).build(),
+            BlockConversionData.Builder.begin(Blocks.CRACKED_NETHER_BRICKS, Blocks.NETHER_BRICKS).build(),
+            BlockConversionData.Builder.begin(Blocks.INFESTED_CRACKED_STONE_BRICKS, Blocks.INFESTED_STONE_BRICKS).build(),
+            BlockConversionData.Builder.begin(Blocks.COBBLESTONE, Blocks.STONE).build(),
+            BlockConversionData.Builder.begin(Blocks.COBBLED_DEEPSLATE, Blocks.DEEPSLATE).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_OAK_WOOD, Blocks.OAK_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_OAK_LOG, Blocks.OAK_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_DARK_OAK_WOOD, Blocks.DARK_OAK_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_DARK_OAK_LOG, Blocks.DARK_OAK_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_PALE_OAK_WOOD, Blocks.PALE_OAK_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_PALE_OAK_LOG, Blocks.PALE_OAK_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_ACACIA_WOOD, Blocks.ACACIA_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_ACACIA_LOG, Blocks.ACACIA_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_CHERRY_WOOD, Blocks.CHERRY_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_CHERRY_LOG, Blocks.CHERRY_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_BIRCH_WOOD, Blocks.BIRCH_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_BIRCH_LOG, Blocks.BIRCH_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_JUNGLE_WOOD, Blocks.JUNGLE_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_JUNGLE_LOG, Blocks.JUNGLE_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_SPRUCE_WOOD, Blocks.SPRUCE_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_SPRUCE_LOG, Blocks.SPRUCE_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_WARPED_STEM, Blocks.WARPED_STEM).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_WARPED_HYPHAE, Blocks.WARPED_HYPHAE).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_CRIMSON_STEM, Blocks.CRIMSON_STEM).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_CRIMSON_HYPHAE, Blocks.CRIMSON_HYPHAE).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_MANGROVE_WOOD, Blocks.MANGROVE_WOOD).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_MANGROVE_LOG, Blocks.MANGROVE_LOG).build(),
+            BlockConversionData.Builder.begin(Blocks.STRIPPED_BAMBOO_BLOCK, Blocks.BAMBOO_BLOCK).build()
     );
+
 
     @Override
     public List<Direction> getBasePattern() {

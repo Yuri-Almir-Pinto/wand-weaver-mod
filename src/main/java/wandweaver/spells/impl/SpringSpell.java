@@ -9,8 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.HuskEntity;
 import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
@@ -31,13 +29,18 @@ import java.util.List;
 
 public class SpringSpell extends AbstractSpell {
     private static final List<IItemConversionData> ITEM_CONVERSION_DATA = List.of(
-            new ItemConversionData(Items.BUCKET, Items.WATER_BUCKET, SoundEvents.ITEM_BUCKET_FILL),
-            new ItemConversionData(Items.SPONGE, Items.WET_SPONGE, true, SoundEvents.BLOCK_SPONGE_ABSORB),
-            new ItemConversionData(Items.TORCH, Items.STICK, 4, 1, true, SoundEvents.BLOCK_FIRE_EXTINGUISH)
+            ItemConversionData.Builder.begin(Items.BUCKET, Items.WATER_BUCKET)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL).build(),
+            ItemConversionData.Builder.begin(Items.SPONGE, Items.WET_SPONGE)
+                    .greedy(true).sound(SoundEvents.BLOCK_SPONGE_ABSORB).build(),
+            ItemConversionData.Builder.begin(Items.TORCH, Items.STICK)
+                    .greedy(true).cost(4).result(1).greedy(true)
+                    .sound(SoundEvents.BLOCK_FIRE_EXTINGUISH).build()
     );
 
     private static final List<IBlockConversionData> BLOCK_CONVERSION_DATA = List.of(
-            new BlockConversionData(Blocks.SPONGE, Blocks.WET_SPONGE, SoundEvents.BLOCK_SPONGE_ABSORB)
+            BlockConversionData.Builder.begin(Blocks.SPONGE, Blocks.WET_SPONGE)
+                    .sound(SoundEvents.BLOCK_SPONGE_ABSORB).build()
     );
 
     @Override

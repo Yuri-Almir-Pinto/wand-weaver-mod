@@ -13,27 +13,56 @@ public record ItemConversionData(
         boolean greedyConversion,
         @Nullable SoundEvent soundOnConversion
 ) implements IItemConversionData {
-    public ItemConversionData(Item from, Item to, int cost, int resultAmount) {
-        this(from, to, cost, resultAmount, false, null);
-    }
+    public static class Builder {
+        private final Item from;
+        private final Item to;
+        private int cost;
+        private int resultAmount;
+        private boolean greedyConversion;
+        private @Nullable SoundEvent soundOnConversion;
 
-    public ItemConversionData(Item from, Item to, boolean greedyConversion) {
-        this(from, to, 1, 1, greedyConversion, null);
-    }
+        public Builder(Item from, Item to) {
+            this.from = from;
+            this.to = to;
+            this.cost = 1;
+            this.resultAmount = 1;
+            this.greedyConversion = false;
+            this.soundOnConversion = null;
+        }
 
-    public ItemConversionData(Item from, Item to) {
-        this(from, to, false);
-    }
+        public static Builder begin(Item from, Item to) {
+            return new Builder(from, to);
+        }
 
-    public ItemConversionData(Item from, Item to, SoundEvent soundOnConversion) {
-        this(from, to, 1, 1, false, soundOnConversion);
-    }
+        public Builder cost(int value) {
+            this.cost = value;
+            return this;
+        }
 
-    public ItemConversionData(Item from, Item to, boolean greedyConversion, SoundEvent soundOnConversion) {
-        this(from, to, 1, 1, greedyConversion, soundOnConversion);
-    }
+        public Builder result(int value) {
+            this.resultAmount = value;
+            return this;
+        }
 
-    public ItemConversionData(Item from, Item to, int cost, int resultAmount, boolean greedyConversion) {
-        this(from, to, cost, resultAmount, greedyConversion, null);
+        public Builder greedy(boolean value) {
+            this.greedyConversion = value;
+            return this;
+        }
+
+        public Builder sound(SoundEvent value) {
+            this.soundOnConversion = value;
+            return this;
+        }
+
+        public ItemConversionData build() {
+            return new ItemConversionData(
+                    this.from,
+                    this.to,
+                    this.cost,
+                    this.resultAmount,
+                    this.greedyConversion,
+                    this.soundOnConversion
+            );
+        }
     }
 }
