@@ -14,5 +14,4 @@
 - Blessing of the Overworld (Or Nostalgia): Grows a tree on the targeted block. The type of the tree can be modified by extension directions.
 - Ambrosia: After sacrificing a golden apple, the player can summon an infinite food source called ambrosia. Ambrosia restores hunger indefinitely, but can only restore only up to 2 saturation, making health regeneration slow and requiring the player to constantly eat ambrosia.
 - Explosion: A spell which creates an explosion centered on the player. It deals a lot of damage to the player, but has a passive looting effect, and beheads all killed mobs.
-- Aqueus: A spell which creates a water source block at the targeted location. The water source block can be used to create infinite water sources.
 - Growth: A spell involving creating trees, mushrooms, grass, and the like.

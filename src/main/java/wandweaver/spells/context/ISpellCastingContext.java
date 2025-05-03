@@ -15,4 +15,6 @@ public interface ISpellCastingContext {
     IBlockConversionUtilities blockConversion();
 
     IItemConversionUtilities itemConversion();
+
+    IEntityUtilities entity();
 }

@@ -30,7 +30,7 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public @Nullable Entity getPlayerCrosshairTargetEntity() {
-        HitResult hitResult = this.getPlayerCrosshairTarget();
+        HitResult hitResult = this.getPlayerCrosshairTarget(false);
 
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             return ((EntityHitResult) hitResult).getEntity();
@@ -40,7 +40,11 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public @Nullable BlockPos getPlayerCrosshairTargetBlockPos() {
-        HitResult hitResult = this.getPlayerCrosshairTarget();
+        return this.getPlayerCrosshairTargetBlockPos(false);
+    }
+
+    public @Nullable BlockPos getPlayerCrosshairTargetBlockPos(boolean includeFluids) {
+        HitResult hitResult = this.getPlayerCrosshairTarget(includeFluids);
 
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             return ((BlockHitResult) hitResult).getBlockPos();
@@ -50,7 +54,11 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public @Nullable Block getPlayerCrosshairTargetBlock() {
-        BlockState blockState = this.getPlayerCrosshairTargetBlockState();
+        return this.getPlayerCrosshairTargetBlock(false);
+    }
+
+    public @Nullable Block getPlayerCrosshairTargetBlock(boolean includeFluids) {
+        BlockState blockState = this.getPlayerCrosshairTargetBlockState(includeFluids);
 
         if (blockState != null) {
             return blockState.getBlock();
@@ -60,7 +68,11 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public @Nullable BlockState getPlayerCrosshairTargetBlockState() {
-        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos();
+        return this.getPlayerCrosshairTargetBlockState(false);
+    }
+
+    public @Nullable BlockState getPlayerCrosshairTargetBlockState(boolean includeFluids) {
+        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos(includeFluids);
 
         if (blockPos != null) {
             return this.player.getServerWorld().getBlockState(blockPos);
@@ -100,7 +112,11 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public @Nullable BlockEntity getPlayerCrosshairTargetBlockEntity() {
-        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos();
+        return this.getPlayerCrosshairTargetBlockEntity(false);
+    }
+
+    public @Nullable BlockEntity getPlayerCrosshairTargetBlockEntity(boolean includeFluids) {
+        BlockPos blockPos = this.getPlayerCrosshairTargetBlockPos(includeFluids);
 
         if (blockPos != null) {
             return this.player.getServerWorld().getBlockEntity(blockPos);
@@ -110,20 +126,28 @@ public class TargetingUtilities implements ITargetingUtilities {
     }
 
     public HitResult getPlayerCrosshairTarget() {
+        return this.getPlayerCrosshairTarget(false);
+    }
+
+    public HitResult getPlayerCrosshairTarget(boolean includeFluids) {
         double playerBlockInteractionRange = this.player.getAttributes().getValue(EntityAttributes.BLOCK_INTERACTION_RANGE);
         double playerEntityInteractionRange = this.player.getAttributes().getValue(EntityAttributes.ENTITY_INTERACTION_RANGE);
 
         Entity camera = player.getCameraEntity();
 
-        return findCrosshairTarget(camera, playerBlockInteractionRange, playerEntityInteractionRange);
+        return findCrosshairTarget(camera, playerBlockInteractionRange, playerEntityInteractionRange, includeFluids);
+    }
+
+    private HitResult findCrosshairTarget(Entity camera, double blockInteractionRange, double entityInteractionRange) {
+        return this.findCrosshairTarget(camera, blockInteractionRange, entityInteractionRange, false);
     }
 
     // Grabbed directly from the client side =w=
-    private HitResult findCrosshairTarget(Entity camera, double blockInteractionRange, double entityInteractionRange) {
+    private HitResult findCrosshairTarget(Entity camera, double blockInteractionRange, double entityInteractionRange, boolean includeFluids) {
         double d = Math.max(blockInteractionRange, entityInteractionRange);
         double e = MathHelper.square(d);
         Vec3d vec3d = camera.getCameraPosVec((float) 1.0);
-        HitResult hitResult = camera.raycast(d, (float) 1.0, false);
+        HitResult hitResult = camera.raycast(d, (float) 1.0, includeFluids);
         double f = hitResult.getPos().squaredDistanceTo(vec3d);
         if (hitResult.getType() != HitResult.Type.MISS) {
             e = f;

@@ -17,6 +17,11 @@ public interface ITargetingUtilities {
     @Nullable Block getPlayerCrosshairTargetBlock();
     @Nullable BlockState getPlayerCrosshairTargetBlockState();
     @Nullable BlockEntity getPlayerCrosshairTargetBlockEntity();
+    @Nullable BlockPos getPlayerCrosshairTargetBlockPos(boolean includeFluids);
+    @Nullable Block getPlayerCrosshairTargetBlock(boolean includeFluids);
+    @Nullable BlockState getPlayerCrosshairTargetBlockState(boolean includeFluids);
+    @Nullable BlockEntity getPlayerCrosshairTargetBlockEntity(boolean includeFluids);
     List<ItemEntity> getPlayerCrosshairTargetItems();
     HitResult getPlayerCrosshairTarget();
+    HitResult getPlayerCrosshairTarget(boolean includeFluids);
 }

@@ -37,6 +37,7 @@ public class SpellManager {
         SpellManager.register(new FeatherFallSpell());
         SpellManager.register(new MendSpell());
         SpellManager.register(new AscendSpell());
+        SpellManager.register(new SpringSpell());
     }
 
     public static @Nullable ISpell getSpellByPattern(List<Direction> pattern) {
@@ -48,11 +49,12 @@ public class SpellManager {
     }
 
     public static ISpellCastingContext getSpellCastingContext(ServerPlayerEntity player) {
-        BlockConversionUtilities blockConversion = new BlockConversionUtilities(player);
-        ItemConversionUtilities itemConversion = new ItemConversionUtilities(player);
+        SoundUtilities sound = new SoundUtilities(player);
+        BlockConversionUtilities blockConversion = new BlockConversionUtilities(player, sound);
+        ItemConversionUtilities itemConversion = new ItemConversionUtilities(player, sound);
         TargetingUtilities targeting = new TargetingUtilities(player);
         InteractionUtilities interaction = new InteractionUtilities(player, targeting);
-        SoundUtilities sound = new SoundUtilities(player);
+        EntityUtilities entity = new EntityUtilities(player);
 
         return new SpellCastingContext(
                 player,
@@ -60,7 +62,8 @@ public class SpellManager {
                 interaction,
                 targeting,
                 blockConversion,
-                itemConversion
+                itemConversion,
+                entity
         );
     }
 }

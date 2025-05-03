@@ -17,5 +17,8 @@
   "spell.name.ascend": "Ascend",
 
   "spell.description.mend": "Repairs broken blocks, broken items, damaged constructs, repairs items in your off-hand, and reduces the repair cost of items if cast on them while on the ground with their material.",
-  "spell.name.mend": "Mend"
+  "spell.name.mend": "Mend",
+
+  "spell.description.spring": "Invokes water to put fires out and inundate blocks and items.",
+  "spell.name.spring": "Spring"
 }

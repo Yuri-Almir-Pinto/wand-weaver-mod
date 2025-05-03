@@ -17,5 +17,8 @@
   "spell.name.ascend": "Ascender",
 
   "spell.description.mend": "Repara blocos quebrados, itens quebrados, constructos danificados, repara itens na sua mão secundária e reduz o custo de reparo de itens se lançado neles enquanto estiverem no chão com seu material.",
-  "spell.name.mend": "Remendar"
+  "spell.name.mend": "Remendar",
+
+  "spell.description.spring": "Invoca água para apagar incêndios e inundar blocos e itens.",
+  "spell.name.spring": "Nascente"
 }

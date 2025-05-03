@@ -11,6 +11,7 @@ public class SpellCastingContext implements ISpellCastingContext {
     private final ITargetingUtilities targeting;
     private final IBlockConversionUtilities blockConversion;
     private final IItemConversionUtilities itemConversion;
+    private final IEntityUtilities entity;
 
     public SpellCastingContext(
             ServerPlayerEntity player,
@@ -18,7 +19,8 @@ public class SpellCastingContext implements ISpellCastingContext {
             IInteractionUtilities interaction,
             ITargetingUtilities targeting,
             IBlockConversionUtilities blockConversion,
-            IItemConversionUtilities itemConversion
+            IItemConversionUtilities itemConversion,
+            IEntityUtilities entity
     ) {
         this.player = player;
         this.sound = sound;
@@ -26,6 +28,7 @@ public class SpellCastingContext implements ISpellCastingContext {
         this.targeting = targeting;
         this.blockConversion = blockConversion;
         this.itemConversion = itemConversion;
+        this.entity = entity;
     }
 
     public ServerPlayerEntity player() {
@@ -50,5 +53,9 @@ public class SpellCastingContext implements ISpellCastingContext {
 
     public IItemConversionUtilities itemConversion() {
         return itemConversion;
+    }
+
+    public IEntityUtilities entity() {
+        return entity;
     }
 }
