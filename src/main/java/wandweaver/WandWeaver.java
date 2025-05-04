@@ -6,10 +6,6 @@ import org.slf4j.LoggerFactory;
 import wandweaver.items.ItemsManager;
 import wandweaver.network.WandWeaverNetworking;
 import wandweaver.spells.SpellManager;
-import wandweaver.spells.impl.FeatherFallSpell;
-import wandweaver.spells.impl.IgniteSpell;
-import wandweaver.spells.impl.MendSpell;
-import wandweaver.spells.impl.StupifySpell;
 
 import java.util.List;
 

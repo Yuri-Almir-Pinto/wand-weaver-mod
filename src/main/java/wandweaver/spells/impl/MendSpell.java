@@ -16,6 +16,7 @@ import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
@@ -99,7 +100,7 @@ public class MendSpell extends AbstractSpell {
             ItemConversionData.Builder.begin(Items.BONE_MEAL, Items.BONE)
                     .cost(3).result(1).greedy(true).build(),
             ItemConversionData.Builder.begin(Items.STRING, Items.COBWEB)
-                    .cost(5).result(1).greedy(true).build()
+                    .cost(1).result(1).greedy(true).build()
     );
 
     private static final List<IBlockConversionData> BLOCK_CONVERSION_LIST = List.of(
@@ -168,136 +169,27 @@ public class MendSpell extends AbstractSpell {
 
     @Override
     public void playerCast(ISpellCastingContext context, List<Direction> pattern) {
-        ServerPlayerEntity player = context.player();
-        ItemStack offhandStack = player.getOffHandStack();
+        boolean shouldReturn;
 
-        if (!offhandStack.isEmpty()) {
-            boolean successfulConversion = context.itemConversion().attemptConversion(ITEM_CONVERSION_LIST);
-
-            if (successfulConversion) {
-                this.repairSound(context);
-                return;
-            }
-
-            // Attempt repairing the durability of the offhand tool.
-            Integer currentDurability = offhandStack.get(DataComponentTypes.DAMAGE);
-            Integer maxDurability = offhandStack.get(DataComponentTypes.MAX_DAMAGE);
-            Integer priorWorkCost = offhandStack.get(DataComponentTypes.REPAIR_COST);
-
-            if (currentDurability == null
-                    || maxDurability == null
-                    || priorWorkCost == null
-                    || currentDurability == 0
-                    || priorWorkCost >= 40) {
-                return;
-            }
-
-            int repairAmount = (int) Math.ceil(maxDurability * 0.25f);
-
-            offhandStack.set(DataComponentTypes.DAMAGE, Math.max((currentDurability - repairAmount), 0));
-            offhandStack.set(DataComponentTypes.REPAIR_COST, priorWorkCost + 10);
-
-            repairSound(context);
-
+        shouldReturn = handleOffhand(context);
+        if (shouldReturn) {
             return;
         }
 
-        // Attempt healing an entity if it's a "construct".
-
-        Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
-
-        if (targetEntity instanceof GolemEntity || targetEntity instanceof SnowGolemEntity) {
-            LivingEntity construct = (LivingEntity) targetEntity;
-            float maxHealth = construct.getMaxHealth();
-            float currentHealth = construct.getHealth();
-
-            if (maxHealth == currentHealth) {
-                return;
-            }
-
-            float repairAmount = maxHealth * 0.25f;
-
-            construct.heal(repairAmount);
-
-            this.repairSound(context);
+        shouldReturn = handleRepairingConstruct(context);
+        if (shouldReturn) {
             return;
         }
 
-        // Attempt reseting the repair cost of an item.
-
-        List<ItemEntity> itemEntities = context.targeting().getPlayerCrosshairTargetItems();
-
-        if (!itemEntities.isEmpty()) {
-            ItemStack toRepairItemStack = null;
-            RepairableComponent repairableComponent = null;
-
-            // First, attempt to grab the tool to reset the cost.
-            for (ItemEntity itemEntity : itemEntities) {
-                ItemStack itemStack = itemEntity.getStack();
-
-                if (itemStack.isEmpty()) {
-                    continue;
-                }
-
-                if (MendSpell.isRepairable(itemStack)) {
-                    toRepairItemStack = itemStack;
-                }
-
-                if (MendSpell.hasRepairMaterial(itemStack)) {
-                    repairableComponent = itemStack.get(DataComponentTypes.REPAIRABLE);
-                }
-            }
-
-            // Just then attempt to find the correct material item.
-            if (toRepairItemStack != null) {
-                Integer repairCostTest = toRepairItemStack.get(DataComponentTypes.REPAIR_COST);
-
-                if (repairCostTest == null || repairCostTest == 0) {
-                    return;
-                }
-
-                for (ItemEntity itemEntity : itemEntities) {
-                    ItemStack itemStack = itemEntity.getStack();
-
-                    if (itemStack.isEmpty()) {
-                        continue;
-                    }
-
-                    ItemStack stackToConsume;
-
-                    if (repairableComponent == null) {
-                        if (itemStack.getItem() != Items.EMERALD) {
-                            continue;
-                        }
-                    } else {
-                        RegistryEntryList<Item> materialItems = repairableComponent.items();
-
-                        if (!materialItems.contains(itemStack.getRegistryEntry())) {
-                            continue;
-                        }
-
-                    }
-
-                    stackToConsume = itemStack;
-
-                    stackToConsume.decrement(1);
-
-                    Integer repairCost = toRepairItemStack.get(DataComponentTypes.REPAIR_COST);
-
-                    if (repairCost == null) {
-                        repairCost = 0;
-                    }
-
-                    toRepairItemStack.set(DataComponentTypes.REPAIR_COST, Math.max(repairCost - 40, 0));
-
-                    this.repairSound(context);
-                    return;
-                }
-            }
+        shouldReturn = handleResettingRepairCostFromGroundItems(context);
+        if (shouldReturn) {
+            return;
         }
 
-        // Attempt mending a block into an unbroken state.
+        handleConvertingTargetBlock(context);
+    }
 
+    private boolean handleConvertingTargetBlock(ISpellCastingContext context) {
         Block targetBlock = context.targeting().getPlayerCrosshairTargetBlock();
         BlockPos targetBlockPos = context.targeting().getPlayerCrosshairTargetBlockPos();
 
@@ -309,18 +201,190 @@ public class MendSpell extends AbstractSpell {
             this.repairSound(context);
         }
 
+        return successfulBlockConversion;
     }
 
-    private static boolean isRepairable(ItemStack itemStack) {
-        return itemStack.get(DataComponentTypes.MAX_DAMAGE) != null;
+    private boolean handleResettingRepairCostFromGroundItems(ISpellCastingContext context) {
+        List<ItemEntity> itemEntities = context.targeting().getPlayerCrosshairTargetItems();
+
+        if (itemEntities.isEmpty()) {
+            return false;
+        }
+
+        ItemEntity toolEntity = itemEntities
+                .stream()
+                .filter(e -> hasRepairCost(e.getStack()))
+                .findFirst().orElse(null);
+
+        ItemStack tool = toolEntity == null ? ItemStack.EMPTY : toolEntity.getStack();
+
+        if (tool.isEmpty()) {
+            return false;
+        }
+
+        RegistryEntryList<Item> repairMaterials = getRepairMaterials(tool);
+
+        if (isGoldTool(tool)) {
+            restoreGoldTool(tool);
+            repairSound(context);
+            return true;
+        }
+
+        ItemEntity materialEntity = itemEntities.stream()
+                .filter(e -> repairMaterials.contains(e.getStack().getRegistryEntry())
+                        || e.getStack().getItem() == Items.GOLD_INGOT)
+                .findFirst().orElse(null);
+
+        ItemStack material = materialEntity == null ? ItemStack.EMPTY : materialEntity.getStack();
+
+        if (material.isEmpty()) {
+            return false;
+        }
+
+        boolean reducedCost;
+
+        if (material.isOf(Items.GOLD_INGOT)) {
+            reducedCost = reduceRepairCost(tool, 5);
+        } else {
+            reducedCost = reduceRepairCost(tool, 40);
+        }
+
+        if (reducedCost) {
+            material.decrement(1);
+            repairSound(context);
+            return true;
+        }
+
+        return false;
     }
 
-    private static boolean hasRepairMaterial(ItemStack itemStack) {
-        return itemStack.get(DataComponentTypes.REPAIRABLE) != null;
+    private boolean handleRepairingConstruct(ISpellCastingContext context) {
+        Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
+
+        if (targetEntity instanceof GolemEntity || targetEntity instanceof SnowGolemEntity) {
+            LivingEntity construct = (LivingEntity) targetEntity;
+            float maxHealth = construct.getMaxHealth();
+            float currentHealth = construct.getHealth();
+
+            if (maxHealth == currentHealth) {
+                return false;
+            }
+
+            float repairAmount = maxHealth * 0.25f;
+
+            construct.heal(repairAmount);
+
+            this.repairSound(context);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleOffhand(ISpellCastingContext context) {
+        ServerPlayerEntity player = context.player();
+        ItemStack offhand = player.getOffHandStack();
+
+        if (!offhand.isEmpty()) {
+            boolean successfulConversion = context.itemConversion().attemptConversion(ITEM_CONVERSION_LIST);
+
+            if (successfulConversion) {
+                this.repairSound(context);
+                return true;
+            }
+
+
+            Integer currentDurability = offhand.get(DataComponentTypes.DAMAGE);
+            Integer maxDurability = offhand.get(DataComponentTypes.MAX_DAMAGE);
+            Integer priorWorkCost = offhand.get(DataComponentTypes.REPAIR_COST);
+
+            if (isGoldTool(offhand)) {
+                restoreGoldTool(offhand);
+                repairSound(context);
+                return true;
+            }
+
+            if (currentDurability == null
+                    || maxDurability == null
+                    || priorWorkCost == null
+                    || currentDurability == 0
+                    || priorWorkCost >= 40) {
+                return false;
+            }
+
+            int repairAmount = (int) Math.ceil(maxDurability * 0.25f);
+
+            offhand.set(DataComponentTypes.DAMAGE, Math.max((currentDurability - repairAmount), 0));
+            offhand.set(DataComponentTypes.REPAIR_COST, priorWorkCost + 10);
+
+            repairSound(context);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean reduceRepairCost(ItemStack stack, int amount) {
+        Integer repairCost = stack.get(DataComponentTypes.REPAIR_COST);
+
+        if (repairCost == null) {
+            repairCost = 0;
+        }
+
+        int newCost = Math.max(repairCost - amount, 0);
+
+        if (newCost == repairCost) {
+            return false;
+        }
+
+        stack.set(DataComponentTypes.REPAIR_COST, newCost);
+
+        return true;
+    }
+
+    private void restoreGoldTool(ItemStack stack) {
+        Integer maxDurability = stack.get(DataComponentTypes.MAX_DAMAGE);
+
+        if (maxDurability == null) {
+            throw new IllegalStateException("Max durability of a gold tool was null when attempting to cast 'mend' on it.");
+        }
+
+        stack.set(DataComponentTypes.DAMAGE, 0);
+        stack.set(DataComponentTypes.MAX_DAMAGE, (int) (maxDurability * 1.2));
+        stack.set(DataComponentTypes.REPAIR_COST, 0);
+
+        if (maxDurability == Integer.MAX_VALUE) {
+            stack.set(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE);
+        }
+    }
+
+    private boolean isGoldTool(ItemStack itemStack) {
+        RepairableComponent component = itemStack.get(DataComponentTypes.REPAIRABLE);
+
+        if (component == null) {
+            return false;
+        }
+
+        return component.items().size() == 1
+                && component.items().contains(Items.GOLD_INGOT.getDefaultStack().getRegistryEntry());
+    }
+
+    private RegistryEntryList<Item> getRepairMaterials(ItemStack stack) {
+        RepairableComponent component = stack.get(DataComponentTypes.REPAIRABLE);
+
+        if (component == null) {
+            return RegistryEntryList.empty();
+        }
+
+        return component.items();
+    }
+
+    private boolean hasRepairCost(ItemStack itemStack) {
+        return itemStack.getOrDefault(DataComponentTypes.MAX_DAMAGE, 0) != 0;
     }
 
     private void repairSound(ISpellCastingContext context) {
-//        this.playSoundOnPlayer(context, SoundEvents.BLOCK_AMETHYST_BLOCK_STEP);
         context.sound().playSoundOnPlayer(SoundEvents.ENTITY_IRON_GOLEM_REPAIR);
     }
 }
