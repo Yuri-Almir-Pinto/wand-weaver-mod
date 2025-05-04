@@ -1,8 +1,12 @@
 package wandweaver.spells.context.utilities;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 
 public interface IEntityUtilities {
-    boolean spawnEntity(LivingEntity entity, double x, double y, double z);
-    boolean substituteEntity(LivingEntity target, LivingEntity transformation);
+    boolean spawnEntity(Entity entity, double x, double y, double z);
+    boolean transformEntity(Entity target, Entity transformation);
+    boolean dropItemAt(ItemStack stack, double x, double y, double z);
+    boolean dropItemAt(ItemStack stack, Vec3d pos);
 }

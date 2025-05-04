@@ -96,7 +96,7 @@ public class SpringSpell extends AbstractSpell {
 
             if (newType != null) {
                 ZombieEntity newZombie = new ZombieEntity(newType, context.player().getWorld());
-                boolean successfulConversion = context.entity().substituteEntity(target, newZombie);
+                boolean successfulConversion = context.entity().transformEntity(target, newZombie);
                 if (successfulConversion) {
                     context.sound().playSoundOnPlayer(SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE);
                     return;

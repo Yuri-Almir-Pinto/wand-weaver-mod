@@ -1,6 +1,8 @@
 package wandweaver.spells.context.impl.utilities;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -15,7 +17,7 @@ public class EntityUtilities implements IEntityUtilities {
         this.world = player.getServerWorld();
     }
     @Override
-    public boolean spawnEntity(LivingEntity entity, double x, double y, double z) {
+    public boolean spawnEntity(Entity entity, double x, double y, double z) {
         boolean spawnedEntity = this.world.spawnEntity(entity);
 
         if (spawnedEntity) {
@@ -26,7 +28,7 @@ public class EntityUtilities implements IEntityUtilities {
     }
 
     @Override
-    public boolean substituteEntity(LivingEntity target, LivingEntity transformation) {
+    public boolean transformEntity(Entity target, Entity transformation) {
         Vec3d pos = target.getPos();
 
         boolean spawnedTransformation = this.spawnEntity(transformation, pos.x, pos.y, pos.z);
@@ -36,5 +38,21 @@ public class EntityUtilities implements IEntityUtilities {
         }
 
         return spawnedTransformation;
+    }
+
+    @Override
+    public boolean dropItemAt(ItemStack stack, Vec3d pos) {
+        return this.dropItemAt(stack, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @Override
+    public boolean dropItemAt(ItemStack stack, double x, double y, double z) {
+        ItemEntity resultEntity = new ItemEntity(
+                world,
+                x, y, z,
+                stack
+        );
+
+        return world.spawnEntity(resultEntity);
     }
 }
