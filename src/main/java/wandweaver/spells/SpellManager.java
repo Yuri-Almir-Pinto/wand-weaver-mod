@@ -38,6 +38,7 @@ public class SpellManager {
         SpellManager.register(new MendSpell());
         SpellManager.register(new AscendSpell());
         SpellManager.register(new SpringSpell());
+        SpellManager.register(new GrowthSpell());
     }
 
     public static @Nullable ISpell getSpellByPattern(List<Direction> pattern) {

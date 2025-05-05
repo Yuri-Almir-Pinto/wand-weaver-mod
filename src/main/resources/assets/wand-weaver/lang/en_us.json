@@ -20,5 +20,8 @@
   "spell.name.mend": "Mend",
 
   "spell.description.spring": "Invokes water to put fires out and inundate blocks and items.",
-  "spell.name.spring": "Spring"
+  "spell.name.spring": "Spring",
+
+  "spell.description.growth": "Causes the target to grow, be it plants, eggs, animals, and more.",
+  "spell.name.growth": "Growth"
 }

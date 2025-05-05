@@ -20,5 +20,8 @@
   "spell.name.mend": "Remendar",
 
   "spell.description.spring": "Invoca água para apagar incêndios e inundar blocos e itens.",
-  "spell.name.spring": "Nascente"
+  "spell.name.spring": "Nascente",
+
+  "spell.description.growth": "Faz com que o alvo cresça, seja ele plantas, ovos, animais ou mais.",
+  "spell.name.growth": "Crescimento"
 }
