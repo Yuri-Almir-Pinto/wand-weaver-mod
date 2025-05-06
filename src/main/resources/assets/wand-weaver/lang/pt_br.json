@@ -26,5 +26,8 @@
   "spell.name.growth": "Crescimento",
 
   "spell.description.craft": "Abre a tela da mesa de trabalho.",
-  "spell.name.craft": "Fabricar"
+  "spell.name.craft": "Fabricar",
+
+  "spell.description.stash": "Abre o seu baú do fim.",
+  "spell.name.stash": "Estoque"
 }

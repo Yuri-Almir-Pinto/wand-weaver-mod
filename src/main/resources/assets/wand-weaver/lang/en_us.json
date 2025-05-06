@@ -26,5 +26,8 @@
   "spell.name.growth": "Growth",
 
   "spell.description.craft": "Opens up the crafting table GUI.",
-  "spell.name.craft": "Craft"
+  "spell.name.craft": "Craft",
+
+  "spell.description.stash": "Opens up your ender chest.",
+  "spell.name.stash": "Stash"
 }
