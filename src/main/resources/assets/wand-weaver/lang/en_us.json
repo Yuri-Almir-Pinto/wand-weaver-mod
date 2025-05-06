@@ -23,5 +23,8 @@
   "spell.name.spring": "Spring",
 
   "spell.description.growth": "Causes the target to grow, be it plants, eggs, animals, and more.",
-  "spell.name.growth": "Growth"
+  "spell.name.growth": "Growth",
+
+  "spell.description.craft": "Opens up the crafting table GUI.",
+  "spell.name.craft": "Craft"
 }

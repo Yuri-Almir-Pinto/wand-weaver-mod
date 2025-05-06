@@ -23,5 +23,8 @@
   "spell.name.spring": "Nascente",
 
   "spell.description.growth": "Faz com que o alvo cresça, seja ele plantas, ovos, animais ou mais.",
-  "spell.name.growth": "Crescimento"
+  "spell.name.growth": "Crescimento",
+
+  "spell.description.craft": "Abre a tela da mesa de trabalho.",
+  "spell.name.craft": "Fabricar"
 }
