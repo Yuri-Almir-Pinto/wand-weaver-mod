@@ -11,7 +11,7 @@ import wandweaver.utils.Direction;
 import java.util.List;
 
 public record CastSpellC2SPayload(String spellId, List<Direction> pattern) implements CustomPayload {
-    public static final Identifier CAST_SPELL_PAYLOAD_ID = Identifier.of(WandWeaver.MOD_ID, "answer-spell-s2c");
+    public static final Identifier CAST_SPELL_PAYLOAD_ID = Identifier.of(WandWeaver.MOD_ID, "cast-spell-s2c");
     public static final CustomPayload.Id<CastSpellC2SPayload> ID = new CustomPayload.Id<>(CAST_SPELL_PAYLOAD_ID);
     public static final PacketCodec<RegistryByteBuf, CastSpellC2SPayload> CODEC =
             PacketCodec.tuple(
