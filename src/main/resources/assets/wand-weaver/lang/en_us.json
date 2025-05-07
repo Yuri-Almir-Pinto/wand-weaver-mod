@@ -4,6 +4,8 @@
   "key.category.wand-weaver": "Wand Weaver",
   "key.wand-weaver.grab_wand": "Grab Hand",
 
+  "spell.action.cast_failed": "Nothing seems to happen...",
+
   "spell.description.ignite": "Invokes flame energy to ignite a block, dry items in your off-hand, and light entities on fire.",
   "spell.name.ignite": "Ignite",
 
@@ -29,5 +31,9 @@
   "spell.name.craft": "Craft",
 
   "spell.description.stash": "Opens up your ender chest.",
-  "spell.name.stash": "Stash"
+  "spell.name.stash": "Stash",
+
+  "spell.description.sacrifice": "Sacrifices items for new spells.",
+  "spell.name.sacrifice": "Sacrifice",
+  "spell.text.sacrifice.success_sacrificing": "%s was sacrificed for magical power."
 }

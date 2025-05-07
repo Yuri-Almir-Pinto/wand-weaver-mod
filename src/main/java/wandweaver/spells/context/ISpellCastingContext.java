@@ -1,6 +1,7 @@
 package wandweaver.spells.context;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import wandweaver.spells.context.state.ISacrificedItemsState;
 import wandweaver.spells.context.utilities.*;
 
 public interface ISpellCastingContext {
@@ -17,4 +18,6 @@ public interface ISpellCastingContext {
     IItemConversionUtilities itemConversion();
 
     IEntityUtilities entity();
+
+    ISacrificedItemsState sacrificedItems();
 }
