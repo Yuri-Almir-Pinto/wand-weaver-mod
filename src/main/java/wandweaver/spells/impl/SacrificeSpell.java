@@ -67,7 +67,7 @@ public class SacrificeSpell extends AbstractSpell {
             successMessage(player, offhandItem);
 
             for (ISacrificeListener listener : context.sacrificedItems().getListeners()) {
-                listener.onSacrifice(context);
+                listener.onSacrifice(context, offhandItem);
             }
         } else {
             failedMessage(player);

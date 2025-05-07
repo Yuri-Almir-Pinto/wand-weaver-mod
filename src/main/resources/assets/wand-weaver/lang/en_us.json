@@ -32,6 +32,7 @@
 
   "spell.description.stash": "Opens up your ender chest.",
   "spell.name.stash": "Stash",
+  "spell.text.stash.unlocked": "You feel capable of replicating the capabilities of the ender chest now.",
 
   "spell.description.sacrifice": "Sacrifices items for new spells.",
   "spell.name.sacrifice": "Sacrifice",

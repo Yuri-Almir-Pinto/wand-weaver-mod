@@ -6,5 +6,5 @@ import java.util.Set;
 
 public interface ISacrificeListener {
     Set<Item> acceptedItems();
-    void onSacrifice(ISpellCastingContext context);
+    void onSacrifice(ISpellCastingContext context, Item sacrificed);
 }
