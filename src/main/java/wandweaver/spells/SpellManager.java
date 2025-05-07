@@ -4,7 +4,9 @@ import net.minecraft.item.Item;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.context.ISpellCastingContext;
+import wandweaver.spells.context.ISpellQueryContext;
 import wandweaver.spells.context.impl.SpellCastingContext;
+import wandweaver.spells.context.impl.SpellQueryContext;
 import wandweaver.spells.context.impl.state.SacrificedItemsPersistentStateProvider;
 import wandweaver.spells.context.impl.utilities.*;
 import wandweaver.spells.impl.*;
@@ -90,6 +92,18 @@ public class SpellManager {
                 itemConversion,
                 entity,
                 sacrificedItemsProvider
+        );
+    }
+
+    public static ISpellQueryContext getSpellQueryContext(ServerPlayerEntity player) {
+        return new SpellQueryContext(
+                new SacrificedItemsPersistentStateProvider(player)
+        );
+    }
+
+    public static ISpellQueryContext toSpellQueryContext(ISpellCastingContext context) {
+        return new SpellQueryContext(
+                context.sacrificedItems()
         );
     }
 }
