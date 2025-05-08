@@ -7,7 +7,6 @@
 - Remove the auto-sneak in spells
 - Make smelting the block being targeted with ignite disableable with sneak.
 - Check in the wand becoming a bucket for a tick when placing water on the nether.
-- Fix the sacrifice spell overriding the pattern for the Growth spell.
 
 # Spell ideas
 

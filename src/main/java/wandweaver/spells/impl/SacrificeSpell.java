@@ -19,12 +19,12 @@ public class SacrificeSpell extends AbstractSpell {
     @Override
     public List<Direction> getBasePattern() {
         return List.of(
-                Direction.UP,
-                Direction.UP,
-                Direction.UP,
+                Direction.RIGHT,
+                Direction.RIGHT,
                 Direction.DOWN,
-                Direction.DOWN,
-                Direction.DOWN
+                Direction.LEFT,
+                Direction.LEFT,
+                Direction.UP
         );
     }
 
@@ -56,6 +56,12 @@ public class SacrificeSpell extends AbstractSpell {
         Item offhandItem = offhand.getItem();
 
         if (offhand.isEmpty()) {
+            failedMessage(player);
+            return;
+        }
+
+        if (context.sacrificedItems().hasItem(offhandItem)) {
+            failedMessage(player);
             return;
         }
 
@@ -69,9 +75,11 @@ public class SacrificeSpell extends AbstractSpell {
             for (ISacrificeListener listener : context.sacrificedItems().getListeners()) {
                 listener.onSacrifice(context, offhandItem);
             }
-        } else {
-            failedMessage(player);
+
+            return;
         }
+
+        failedMessage(player);
     }
 
     private void successMessage(ServerPlayerEntity player, Item item) {
