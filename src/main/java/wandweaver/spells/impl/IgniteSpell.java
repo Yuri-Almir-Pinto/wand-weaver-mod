@@ -87,19 +87,21 @@ public class IgniteSpell extends AbstractSpell {
             return;
         }
 
-        shouldReturn = handleFurnaceAsTarget(context);
-        if (shouldReturn) {
-            return;
-        }
+        if (!context.player().isSneaking()) {
+            shouldReturn = handleFurnaceAsTarget(context);
+            if (shouldReturn) {
+                return;
+            }
 
-        shouldReturn = handleItemsOnTheGround(context);
-        if (shouldReturn) {
-            return;
-        }
+            shouldReturn = handleItemsOnTheGround(context);
+            if (shouldReturn) {
+                return;
+            }
 
-        shouldReturn = handleCookingTargetBlock(context);
-        if (shouldReturn) {
-            return;
+            shouldReturn = handleCookingTargetBlock(context);
+            if (shouldReturn) {
+                return;
+            }
         }
 
         shouldReturn = handleSettingEntitiesOnFire(context);

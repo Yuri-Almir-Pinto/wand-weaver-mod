@@ -4,8 +4,6 @@
 - Fix text breaking out of the screen when casting a spell with a long description.
 - Add a client hook while casting, to allow spells to change the hud and stuff to give extra, useful information.
 - Add the common config to the Spellcasting context, and remove the pattern of the spell from the spell itself to config files.
-- Remove the auto-sneak in spells
-- Make smelting the block being targeted with ignite disableable with sneak.
 - Check in the wand becoming a bucket for a tick when placing water on the nether.
 
 # Spell ideas

@@ -1,6 +1,5 @@
 package wandweaver.spells.context.impl.utilities;
 
-import com.jcraft.jorbis.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
@@ -39,7 +38,7 @@ public class InteractionUtilities implements IInteractionUtilities {
     }
 
     public boolean interactEntityAsIfHolding(ItemStack itemStack) {
-        return sneakAndSelectItem(itemStack, () -> {
+        return setup(itemStack, () -> {
             HitResult hitResult = this.targeting.getPlayerCrosshairTarget();
 
             if (hitResult.getType() != HitResult.Type.ENTITY) {
@@ -60,7 +59,7 @@ public class InteractionUtilities implements IInteractionUtilities {
     }
 
     public boolean interactBlockAsIfHolding(ItemStack itemStack, boolean includeFluids) {
-        return sneakAndSelectItem(itemStack, () -> {
+        return setup(itemStack, () -> {
             HitResult hitResult = this.targeting.getPlayerCrosshairTarget(includeFluids);
 
             if (hitResult.getType() != HitResult.Type.BLOCK) {
@@ -80,7 +79,7 @@ public class InteractionUtilities implements IInteractionUtilities {
     }
 
     public boolean interactItemAsIfHolding(ItemStack itemStack) {
-        return sneakAndSelectItem(itemStack, () -> this.player.interactionManager.interactItem(
+        return setup(itemStack, () -> this.player.interactionManager.interactItem(
                     this.player,
                     this.player.getWorld(),
                     itemStack,
@@ -88,24 +87,16 @@ public class InteractionUtilities implements IInteractionUtilities {
             ).isAccepted());
     }
 
-    public boolean sneakAndSelectItem(ItemStack itemStack, Supplier<Boolean> func) {
+    public boolean setup(ItemStack itemStack, Supplier<Boolean> func) {
         ItemStack wandItem = this.player.getMainHandStack();
 
         this.player.getInventory().setSelectedStack(EphemeralItems.turnEphemeral(itemStack));
 
-        boolean originalSneaking = player.isSneaking();
-
-//        // Forces the player to be sneaking, to avoid any interaction that isn't the casting of a spell, since the
-//        // casting of a spell is certainly the desired action if the player is currently casting one.
-//        this.player.setSneaking(true);
-
         boolean result = func.get();
 
-        this.player.getInventory().setSelectedStack(wandItem);
-
-        this.player.setSneaking(originalSneaking);
-
         itemStack.setCount(0);
+
+        this.player.getInventory().setSelectedStack(wandItem);
 
         return result;
     }
