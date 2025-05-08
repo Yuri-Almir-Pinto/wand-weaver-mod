@@ -4,10 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractFurnaceBlockEntityAccessor",
+    "ItemEntityMixin",
     "ItemStackMixin",
+    "LivingEntityMixin",
     "PlayerEntityMixin",
-    "PlayerInventoryMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ScreenHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

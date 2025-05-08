@@ -2,11 +2,11 @@ package wandweaver.keybindings;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.glfw.GLFW;
-import wandweaver.WandWeaver;
+import wandweaver.network.payloads.SummonWandC2SPayload;
 
 public class KeyInputManager {
     public static final String KEY_CATEGORY_WAND_WEAVER = "key.category.wand-weaver";
@@ -26,9 +26,7 @@ public class KeyInputManager {
                 return;
             }
 
-            PlayerInventory inventory = player.getInventory();
-
-            inventory.setSelectedSlot(WandWeaver.WAND_SLOT);
+            ClientPlayNetworking.send(SummonWandC2SPayload.PAYLOAD);
         });
     }
 

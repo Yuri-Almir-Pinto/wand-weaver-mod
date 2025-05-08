@@ -4,16 +4,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.WandWeaver;
+import wandweaver.items.ItemsManager;
+import wandweaver.utils.Sounds;
 
 public class WandItem extends Item {
     public WandItem(Settings settings) {
@@ -64,6 +67,27 @@ public class WandItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        stack.setCount(0);
+        if (!(entity instanceof PlayerEntity player)) {
+            return;
+        }
+
+        PlayerInventory inventory = player.getInventory();
+        boolean deleted = false;
+        stack.setCount(2);
+
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack itemStack = inventory.getStack(i);
+
+            if (itemStack.isOf(ItemsManager.WAND) && itemStack.getCount() != 2) {
+                itemStack.setCount(0);
+                deleted = true;
+            }
+        }
+
+        stack.setCount(1);
+
+        if (!world.isClient && deleted) {
+            Sounds.playSoundOnPlayer(player, SoundEvents.ENTITY_PLAYER_TELEPORT);
+        }
     }
 }

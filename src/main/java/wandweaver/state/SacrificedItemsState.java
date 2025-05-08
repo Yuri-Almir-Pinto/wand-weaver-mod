@@ -17,7 +17,7 @@ public class SacrificedItemsState extends PersistentState {
     public static final Codec<SacrificedItemsState> CODEC = NbtCompound.CODEC.xmap(
             (FunctionType<NbtCompound, SacrificedItemsState>) nbt -> {
                 SacrificedItemsState state = new SacrificedItemsState();
-                state.sacrificedItems = new HashMap<>();
+                state.ensureMapNotNull();
 
                 nbt.forEach((key, value) -> {
                     UUID uKey = UUID.fromString(key);
@@ -38,6 +38,7 @@ public class SacrificedItemsState extends PersistentState {
             },
             (FunctionType<SacrificedItemsState, NbtCompound>) state -> {
                 NbtCompound nbt = new NbtCompound();
+                state.ensureMapNotNull();
 
                 state.sacrificedItems.forEach((key, value) -> {
                     String sKey = key.toString();
