@@ -1,10 +1,13 @@
 {
   "item.wand-weaver.wand": "Varinha",
+  "item.wand-weaver.wand.description": "Esta varinha vem até você sempre que você a chama.",
+  "item.wand-weaver.wand.name": "Varinha %s%s%s",
 
   "key.category.wand-weaver": "Wand Weaver",
   "key.wand-weaver.grab_wand": "Selecionar varinha",
 
   "spell.action.cast_failed": "Nada parece acontecer...",
+  "spell.action.cannot_autocast": "Este feitiço não pode ser auto conjurado.",
 
   "spell.description.ignite": "Invoca energia flamejante para incendiar um bloco, secar itens na sua mão secundária e incendiar entidades.",
   "spell.name.ignite": "Inflamar",

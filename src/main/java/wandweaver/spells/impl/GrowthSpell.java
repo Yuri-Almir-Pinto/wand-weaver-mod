@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -97,12 +98,12 @@ public class GrowthSpell extends AbstractSpell {
     }
 
     @Override
-    public Text getName(@Nullable List<Direction> directions) {
+    public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.growth");
     }
 
     @Override
-    public Text getDescription(@Nullable List<Direction> directions) {
+    public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.growth");
     }
 

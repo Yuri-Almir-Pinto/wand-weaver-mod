@@ -5,8 +5,12 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
-import wandweaver.network.payloads.SummonWandC2SPayload;
+import wandweaver.WandWeaver;
+import wandweaver.WandWeaverClient;
+import wandweaver.network.payloads.MagicalActionC2SPayload;
+import wandweaver.utils.InscribedWand;
 
 public class KeyInputManager {
     public static final String KEY_CATEGORY_WAND_WEAVER = "key.category.wand-weaver";
@@ -25,8 +29,18 @@ public class KeyInputManager {
             if (player == null) {
                 return;
             }
+            if (InscribedWand.isInscribed(player.getStackInHand(Hand.MAIN_HAND)) && !WandWeaver.isAutoCasting) {
+                ClientPlayNetworking.send(MagicalActionC2SPayload.erase());
+            } else if (WandWeaver.isCasting && !WandWeaverClient.DIRECTION_LIST.isEmpty()) {
+                ClientPlayNetworking.send(MagicalActionC2SPayload.inscribe(WandWeaverClient.DIRECTION_LIST.stream().toList()));
+                WandWeaver.isCasting = false;
+                WandWeaverClient.DIRECTION_LIST.clear();
+                WandWeaverClient.currentSpell = null;
+                client.player.stopUsingItem();
+            } else {
+                ClientPlayNetworking.send(MagicalActionC2SPayload.wand());
+            }
 
-            ClientPlayNetworking.send(SummonWandC2SPayload.PAYLOAD);
         });
     }
 

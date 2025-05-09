@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -59,12 +60,12 @@ public class SpringSpell extends AbstractSpell {
     }
 
     @Override
-    public Text getName(@Nullable List<Direction> directions) {
+    public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.spring");
     }
 
     @Override
-    public Text getDescription(@Nullable List<Direction> directions) {
+    public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.spring");
     }
 

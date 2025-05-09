@@ -1,6 +1,6 @@
 package wandweaver.spells;
 
-import net.minecraft.text.Text;
+import net.minecraft.text.MutableText;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.context.ISpellCastingContext;
 import wandweaver.spells.context.ISpellQueryContext;
@@ -11,9 +11,17 @@ import java.util.List;
 public interface ISpell {
     List<Direction> getBasePattern();
 
-    Text getName(@Nullable List<Direction> directions);
+    default int getAutoDrawTime() {
+        return 3;
+    }
 
-    Text getDescription(@Nullable List<Direction> directions);
+    MutableText getName(@Nullable List<Direction> pattern);
+
+    default int getColor(@Nullable List<Direction> pattern) {
+        return 0xFFFFFF;
+    }
+
+    MutableText getDescription(@Nullable List<Direction> pattern);
 
     String getIdentifier();
 

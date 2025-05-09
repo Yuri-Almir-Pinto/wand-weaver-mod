@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.*;
@@ -15,6 +14,7 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -59,12 +59,12 @@ public class IgniteSpell extends AbstractSpell {
     }
 
     @Override
-    public Text getName(@Nullable List<Direction> directions) {
+    public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.ignite");
     }
 
     @Override
-    public Text getDescription(@Nullable List<Direction> directions) {
+    public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.ignite");
     }
 

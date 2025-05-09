@@ -15,6 +15,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
@@ -153,12 +154,12 @@ public class MendSpell extends AbstractSpell {
     }
 
     @Override
-    public Text getName(@Nullable List<Direction> directions) {
+    public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.mend");
     }
 
     @Override
-    public Text getDescription(@Nullable List<Direction> directions) {
+    public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.mend");
     }
 

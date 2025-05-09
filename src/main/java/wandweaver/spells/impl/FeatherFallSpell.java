@@ -3,6 +3,7 @@ package wandweaver.spells.impl;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
@@ -27,12 +28,12 @@ public class FeatherFallSpell extends AbstractSpell {
     }
 
     @Override
-    public Text getName(@Nullable List<Direction> directions) {
+    public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.featherFall");
     }
 
     @Override
-    public Text getDescription(@Nullable List<Direction> directions) {
+    public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.featherFall");
     }
 

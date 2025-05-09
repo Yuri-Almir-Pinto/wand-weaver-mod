@@ -10,17 +10,45 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.WandWeaver;
 import wandweaver.items.ItemsManager;
+import wandweaver.spells.ISpell;
+import wandweaver.utils.Direction;
+import wandweaver.utils.InscribedWand;
 import wandweaver.utils.Sounds;
+
+import java.util.List;
 
 public class WandItem extends Item {
     public WandItem(Settings settings) {
         super(settings);
+    }
+
+    @Override
+    public Text getName(ItemStack stack) {
+        if (InscribedWand.isInscribed(stack)) {
+            ISpell spell = InscribedWand.getSpell(stack);
+            List<Direction> pattern = InscribedWand.getInscription(stack);
+
+            if (spell == null || pattern == null) {
+                return super.getName(stack);
+            }
+
+            return Text.translatable(
+                    "item.wand-weaver.wand.name",
+                    Text.literal("[").withColor(Colors.GRAY),
+                    spell.getName(pattern).withColor(spell.getColor(pattern)),
+                    Text.literal("]").withColor(Colors.GRAY)
+                    );
+        }
+
+        return super.getName(stack);
     }
 
     @Override
@@ -39,8 +67,12 @@ public class WandItem extends Item {
             return ActionResult.PASS;
         }
 
-        if (user.getWorld().isClient) {
-            WandWeaver.isCasting = true;
+        if (world.isClient) {
+            if (InscribedWand.isInscribed(user.getStackInHand(Hand.MAIN_HAND))) {
+                WandWeaver.isAutoCasting = true;
+            } else {
+                WandWeaver.isCasting = true;
+            }
         }
 
         user.setCurrentHand(hand);
@@ -49,20 +81,38 @@ public class WandItem extends Item {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        if (user.getWorld().isClient) {
-            WandWeaver.isCasting = false;
+        if (world.isClient) {
+            if (InscribedWand.isInscribed(user.getStackInHand(Hand.MAIN_HAND))) {
+                WandWeaver.isAutoCasting = false;
+            } else {
+                WandWeaver.isCasting = false;
+            }
         }
 
-        return (ItemStack) (Object) this;
+        return stack;
     }
 
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (user.getWorld().isClient) {
-            WandWeaver.isCasting = false;
+        if (world.isClient) {
+            if (InscribedWand.isInscribed(user.getStackInHand(Hand.MAIN_HAND))) {
+                WandWeaver.isAutoCasting = false;
+            } else {
+                WandWeaver.isCasting = false;
+            }
         }
 
         return false;
+    }
+
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        super.usageTick(world, user, stack, remainingUseTicks);
+    }
+
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        return InscribedWand.isInscribed(stack);
     }
 
     @Override

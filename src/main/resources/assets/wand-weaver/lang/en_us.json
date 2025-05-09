@@ -1,10 +1,13 @@
 {
   "item.wand-weaver.wand": "Wand",
+  "item.wand-weaver.wand.description": "This wand comes to you whenever you call it.",
+  "item.wand-weaver.wand.name": "Wand %s%s%s",
 
   "key.category.wand-weaver": "Wand Weaver",
   "key.wand-weaver.grab_wand": "Grab Wand",
 
   "spell.action.cast_failed": "Nothing seems to happen...",
+  "spell.action.cannot_autocast": "This spell cannot be auto cast.",
 
   "spell.description.ignite": "Invokes flame energy to ignite a block, dry items in your off-hand, and light entities on fire.",
   "spell.name.ignite": "Ignite",

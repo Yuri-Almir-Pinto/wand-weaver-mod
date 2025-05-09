@@ -15,24 +15,28 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpellManager {
-    private static final HashMap<List<Direction>, ISpell> spellsByPattern = new HashMap<>();
+    private static final DirectionTrie spellsByPattern = new DirectionTrie();
     private static final HashMap<String, ISpell> spellsById = new HashMap<>();
     private static final List<ISpell> allSpells = new ArrayList<>();
 
     private static void register(ISpell spell) {
         List<Direction> pattern = spell.getBasePattern();
 
-        if (spellsByPattern.containsKey(pattern)) {
+        boolean noConflict = spellsByPattern.insert(pattern, spell);
+
+        if (!noConflict) {
             throw new IllegalArgumentException("Spell with pattern " + pattern + " already registered.");
         }
-
-        spellsByPattern.put(pattern, spell);
 
         if (spellsById.containsKey(spell.getIdentifier())) {
             throw new IllegalArgumentException("Spell with ID " + spell.getIdentifier() + " already registered.");
         }
 
         spellsById.put(spell.getIdentifier(), spell);
+
+        if (spell.getAutoDrawTime() == 0) {
+            throw new IllegalArgumentException("Spell with ID " + spell.getIdentifier() + " cannot have auto draw time of 0.");
+        }
 
         allSpells.add(spell);
     }
@@ -51,7 +55,7 @@ public class SpellManager {
     }
 
     public static @Nullable ISpell getSpellByPattern(List<Direction> pattern) {
-        return spellsByPattern.get(pattern);
+        return spellsByPattern.getSpellByPattern(pattern);
     }
 
     public static @Nullable ISpell getSpellById(String id) {
@@ -106,4 +110,66 @@ public class SpellManager {
                 context.sacrificedItems()
         );
     }
+
+    public static class DirectionTrie {
+        private static class DirectionTrieNode {
+            private static final int DIR_COUNT = Direction.values().length;
+            DirectionTrieNode[] children = new DirectionTrieNode[DIR_COUNT];
+            ISpell spell = null;
+
+            DirectionTrieNode get(Direction dir) {
+                return children[dir.ordinal()];
+            }
+
+            DirectionTrieNode computeIfAbsent(Direction dir) {
+                int index = dir.ordinal();
+                if (children[index] == null) {
+                    children[index] = new DirectionTrieNode();
+                }
+                return children[index];
+            }
+        }
+
+        private final DirectionTrieNode root = new DirectionTrieNode();
+
+        public boolean insert(List<Direction> pattern, ISpell spell) {
+            DirectionTrieNode node = root;
+
+            for (Direction dir : pattern) {
+                if (node.spell != null) {
+                    return false;
+                }
+
+                node = node.computeIfAbsent(dir);
+            }
+
+            if (node.spell != null) {
+                return false;
+            }
+
+            node.spell = spell;
+
+            return true;
+        }
+
+        public @Nullable ISpell getSpellByPattern(List<Direction> inputPattern) {
+            DirectionTrieNode node = root;
+
+            for (Direction dir : inputPattern) {
+                node = node.get(dir);
+
+                if (node == null) {
+                    break;
+                }
+
+                if (node.spell != null) {
+                    return node.spell;
+                }
+            }
+
+            return null;
+        }
+    }
+
+
 }

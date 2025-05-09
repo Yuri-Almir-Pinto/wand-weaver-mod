@@ -1,9 +1,7 @@
 package wandweaver;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import wandweaver.keybindings.KeyInputManager;
 import wandweaver.networking.WandWeavingClientNetworking;
@@ -11,6 +9,7 @@ import wandweaver.rendering.SpellcastingRenderer;
 import wandweaver.spells.ISpell;
 import wandweaver.utils.Direction;
 import wandweaver.utils.SpellcastingManager;
+import wandweaver.utils.TooltipManager;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -30,10 +29,11 @@ public class WandWeaverClient implements ClientModInitializer {
 		SpellcastingManager.register();
 		WandWeavingClientNetworking.registerClientHandlers();
 		KeyInputManager.register();
+		TooltipManager.registerTooltips();
 	}
 
 	public static void renderArrows(DrawContext context, RenderTickCounter tickDelta) {
-		if (!WandWeaver.isCasting) {
+		if (!WandWeaver.isCasting && !WandWeaver.isAutoCasting) {
 			return;
 		}
 
