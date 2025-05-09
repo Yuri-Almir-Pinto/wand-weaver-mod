@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.SnifferEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.item.BlockItem;
@@ -15,6 +16,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
@@ -103,6 +105,11 @@ public class GrowthSpell extends AbstractSpell {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return Colors.GREEN;
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.growth");
     }
@@ -121,7 +128,7 @@ public class GrowthSpell extends AbstractSpell {
             return;
         }
 
-        shouldReturn = handleGrowingBabies(context);
+        shouldReturn = handleTargettingEntities(context);
         if (shouldReturn) {
             return;
         }
@@ -217,7 +224,7 @@ public class GrowthSpell extends AbstractSpell {
         return false;
     }
 
-    private boolean handleGrowingBabies(ISpellCastingContext context) {
+    private boolean handleTargettingEntities(ISpellCastingContext context) {
         Entity targetEntity = context.targeting().getPlayerCrosshairTargetEntity();
 
         if (targetEntity instanceof MobEntity mob && mob.isBaby()) {
@@ -226,6 +233,12 @@ public class GrowthSpell extends AbstractSpell {
             if (!mob.isBaby()) {
                 mob.addVelocity(new Vec3d(0, 0.5, 0));
                 context.sound().playSoundOnPlayer(SoundEvents.ENTITY_BREEZE_CHARGE);
+                return true;
+            }
+        } else if (targetEntity instanceof SheepEntity sheep) {
+            if (sheep.isSheared()) {
+                sheep.setSheared(false);
+                context.sound().playSoundOnPlayer(SoundEvents.BLOCK_WOOL_PLACE);
                 return true;
             }
         }
@@ -282,7 +295,8 @@ public class GrowthSpell extends AbstractSpell {
             SugarCaneBlock.class,
             ChorusFlowerBlock.class,
             PumpkinBlock.class,
-            BambooBlock.class
+            BambooBlock.class,
+            SporeBlossomBlock.class
     );
 
     private static final List<Block> NON_PLANT_EXCEPTION_BLOCKS = List.of(

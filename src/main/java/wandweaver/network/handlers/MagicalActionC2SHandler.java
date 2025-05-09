@@ -75,6 +75,8 @@ public class MagicalActionC2SHandler {
 
             player.setStackInHand(Hand.MAIN_HAND, result);
 
+            player.stopUsingItem();
+
             Sounds.playSoundOnPlayer(player, SoundEvents.BLOCK_TRIAL_SPAWNER_OPEN_SHUTTER);
             return;
         }

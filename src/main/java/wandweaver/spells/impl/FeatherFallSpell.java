@@ -33,6 +33,16 @@ public class FeatherFallSpell extends AbstractSpell {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return 0xf2e6b3; // Yellowy white
+    }
+
+    @Override
+    public int getAutoDrawTime() {
+        return 1;
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.featherFall");
     }
@@ -47,7 +57,7 @@ public class FeatherFallSpell extends AbstractSpell {
         ServerPlayerEntity player = context.player();
 
         player.addStatusEffect(
-                new StatusEffectInstance(StatusEffects.SLOW_FALLING, 20, 20, false, false, true)
+                new StatusEffectInstance(StatusEffects.SLOW_FALLING, 20, 1, false, false, true)
         );
     }
 }

@@ -65,6 +65,11 @@ public class SpringSpell extends AbstractSpell {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return 0x42ECF5; // Aqua shade of blue
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.spring");
     }
@@ -76,43 +81,85 @@ public class SpringSpell extends AbstractSpell {
 
     @Override
     public void playerCast(ISpellCastingContext context, List<Direction> pattern) {
+        boolean shouldReturn;
+
+        shouldReturn = handleExtinguishingPlayerFire(context);
+        if (shouldReturn) {
+            return;
+        }
+
+        shouldReturn = handleExtinguishingTargetEntityFire(context);
+        if (shouldReturn) {
+            return;
+        }
+
+        shouldReturn = handleZombieTransformation(context);
+        if (shouldReturn) {
+            return;
+        }
+
+        shouldReturn = handleOffhandInteractions(context);
+        if (shouldReturn) {
+            return;
+        }
+
+        shouldReturn = handleTargetBlockInteractions(context);
+        if (shouldReturn) {
+            return;
+        }
+
+        handleDefaultWaterBucketInteraction(context);
+    }
+
+    private boolean handleExtinguishingPlayerFire(ISpellCastingContext context) {
         if (context.player().isOnFire()) {
             context.player().setFireTicks(0);
             context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private boolean handleExtinguishingTargetEntityFire(ISpellCastingContext context) {
         Entity hitEntity = context.targeting().getPlayerCrosshairTargetEntity();
-
         if (hitEntity != null && hitEntity.isOnFire()) {
             hitEntity.setFireTicks(0);
             context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private boolean handleZombieTransformation(ISpellCastingContext context) {
+        Entity hitEntity = context.targeting().getPlayerCrosshairTargetEntity();
         if (hitEntity instanceof ZombieEntity target) {
-            EntityType<? extends ZombieEntity> newType = hitEntity instanceof HuskEntity ? EntityType.ZOMBIE
-                    : hitEntity instanceof ZombieEntity ? EntityType.DROWNED
-                    : null;
+            EntityType<? extends ZombieEntity> newType = null;
+            if (hitEntity instanceof HuskEntity) {
+                newType = EntityType.ZOMBIE;
+            } else if (hitEntity.getType() == EntityType.ZOMBIE) { // Check explicitly for Zombie
+                newType = EntityType.DROWNED;
+            }
 
             if (newType != null) {
                 ZombieEntity newZombie = new ZombieEntity(newType, context.player().getWorld());
                 boolean successfulConversion = context.entity().transformEntity(target, newZombie);
                 if (successfulConversion) {
                     context.sound().playSoundOnPlayer(SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE);
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
+    private boolean handleOffhandInteractions(ISpellCastingContext context) {
         ItemStack offhand = context.player().getOffHandStack();
-
         if (!offhand.isEmpty()) {
             if (offhand.isOf(Items.LAVA_BUCKET)) {
                 context.player().setStackInHand(Hand.OFF_HAND, new ItemStack(Items.BUCKET));
                 context.player().getInventory().offerOrDrop(new ItemStack(Items.OBSIDIAN, 1));
                 context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
-                return;
+                return true;
             } else if (offhand.isOf(Items.GLASS_BOTTLE)) {
                 offhand.decrement(1);
                 ItemStack waterBottle = new ItemStack(Items.POTION, 1);
@@ -123,47 +170,37 @@ public class SpringSpell extends AbstractSpell {
                 } else {
                     context.player().getInventory().offerOrDrop(waterBottle);
                 }
-
                 context.sound().playSoundOnPlayer(SoundEvents.ITEM_BOTTLE_FILL);
-                return;
+                return true;
             }
 
-            boolean successfulConversion = context
+            return context
                     .itemConversion()
                     .attemptConversion(ITEM_CONVERSION_DATA, SoundEvents.ITEM_BUCKET_EMPTY);
-
-            if (successfulConversion) {
-                return;
-            }
         }
+        return false;
+    }
 
+    private boolean handleTargetBlockInteractions(ISpellCastingContext context) {
         Block targetBlock = context.targeting().getPlayerCrosshairTargetBlock(true);
         BlockPos targetBlockPos = context.targeting().getPlayerCrosshairTargetBlockPos(true);
         BlockState targetBlockState = context.targeting().getPlayerCrosshairTargetBlockState(true);
 
-        if (targetBlock == Blocks.LAVA && targetBlockState != null) {
+        if (targetBlock == Blocks.LAVA && targetBlockState != null && targetBlockPos != null) {
             int lavaLevel = targetBlockState.getFluidState().getLevel();
-
             BlockState newBlockState = lavaLevel == 8 ? Blocks.OBSIDIAN.getDefaultState() : Blocks.COBBLESTONE.getDefaultState();
-
-            context.player()
-                    .getServerWorld()
-                    .setBlockState(targetBlockPos, newBlockState);
-
+            context.player().getServerWorld().setBlockState(targetBlockPos, newBlockState);
             context.sound().playSoundOnPlayer(SoundEvents.BLOCK_FIRE_EXTINGUISH);
-            return;
+            return true;
         } else {
-            boolean successfulBlockConversion = context
+            return context
                     .blockConversion()
                     .attemptConversion(targetBlock, targetBlockPos, BLOCK_CONVERSION_DATA, SoundEvents.ITEM_BUCKET_EMPTY);
-
-            if (successfulBlockConversion) {
-                return;
-            }
         }
+    }
 
-
-        var successfulUsage = context
+    private boolean handleDefaultWaterBucketInteraction(ISpellCastingContext context) {
+        boolean successfulUsage = context
                 .interaction()
                 .interactAsIfHolding(new ItemStack(Items.WATER_BUCKET));
 
@@ -176,5 +213,6 @@ public class SpringSpell extends AbstractSpell {
         if (successfulUsage) {
             context.sound().playSoundOnPlayer(SoundEvents.ITEM_BUCKET_EMPTY);
         }
+        return successfulUsage; // The method itself returns success/failure
     }
 }

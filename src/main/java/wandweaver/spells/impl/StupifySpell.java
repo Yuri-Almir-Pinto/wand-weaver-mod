@@ -11,6 +11,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
 import wandweaver.spells.context.ISpellCastingContext;
@@ -43,6 +44,11 @@ public class StupifySpell extends AbstractSpell {
     @Override
     public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.stupefy");
+    }
+
+    @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return Colors.YELLOW;
     }
 
     @Override

@@ -33,6 +33,11 @@ public class CraftSpell extends AbstractSpell {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return 0xd1771d; // Wood-like color
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.craft");
     }

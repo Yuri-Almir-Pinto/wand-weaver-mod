@@ -17,7 +17,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import wandweaver.spells.AbstractSpell;
@@ -156,6 +155,11 @@ public class MendSpell extends AbstractSpell {
     @Override
     public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.mend");
+    }
+
+    @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return 0x4287F5; // Dodger blue like color.
     }
 
     @Override
@@ -352,12 +356,11 @@ public class MendSpell extends AbstractSpell {
         }
 
         stack.set(DataComponentTypes.DAMAGE, 0);
-        stack.set(DataComponentTypes.MAX_DAMAGE, (int) (maxDurability * 1.2));
-        stack.set(DataComponentTypes.REPAIR_COST, 0);
-
-        if (maxDurability == Integer.MAX_VALUE) {
-            stack.set(DataComponentTypes.UNBREAKABLE, Unit.INSTANCE);
+        if (maxDurability <= 64) {
+            stack.set(DataComponentTypes.MAX_DAMAGE, 64);
         }
+
+        stack.set(DataComponentTypes.REPAIR_COST, 0);
     }
 
     private boolean isGoldTool(ItemStack itemStack) {

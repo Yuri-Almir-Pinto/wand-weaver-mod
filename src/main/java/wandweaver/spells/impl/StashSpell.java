@@ -38,6 +38,11 @@ public class StashSpell extends AbstractSpell implements ISacrificeListener {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return 0xb81a9d; // Ender-like shade of pink
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.stash");
     }

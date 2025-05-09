@@ -16,6 +16,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +62,11 @@ public class IgniteSpell extends AbstractSpell {
     @Override
     public MutableText getName(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.name.ignite");
+    }
+
+    @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return Colors.RED;
     }
 
     @Override
@@ -186,7 +192,7 @@ public class IgniteSpell extends AbstractSpell {
         if (targetBlockEntity instanceof AbstractFurnaceBlockEntity furnaceBlock) {
             AbstractFurnaceBlockEntityAccessor furnaceAccessor = (AbstractFurnaceBlockEntityAccessor) furnaceBlock;
             // For some reason, the burn ticks are offset by 1. 200/400 does not complete a recipe.
-            int amountOfItems = 4;
+            int amountOfItems = 8;
             int extraTime = ((furnaceBlock instanceof SmokerBlockEntity || furnaceBlock instanceof BlastFurnaceBlockEntity
                     ? 100 : 200) * amountOfItems) + 1;
 

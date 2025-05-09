@@ -35,6 +35,11 @@ public class SacrificeSpell extends AbstractSpell {
     }
 
     @Override
+    public int getColor(@Nullable List<Direction> pattern) {
+        return MESSAGE_COLOR;
+    }
+
+    @Override
     public MutableText getDescription(@Nullable List<Direction> pattern) {
         return Text.translatable("spell.description.sacrifice");
     }
